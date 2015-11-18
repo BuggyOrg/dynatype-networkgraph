@@ -1,0 +1,82 @@
+/* global describe, it */
+
+var expect = require('chai').expect
+var dtypenet = require('../src/dynatype-network.js')
+var grlib = require('graphlib')
+
+var convertGraph = new grlib.Graph({ directed: true, compound: false, multigraph: false })
+var processGraph = new grlib.Graph({ directed: true, compound: false, multigraph: true })
+
+convertGraph.setNode('A', 'A')
+convertGraph.setNode('B', 'B')
+convertGraph.setNode('C', 'C')
+convertGraph.setNode('D', 'D')
+
+convertGraph.setEdge('A', 'B', 'A_B')
+convertGraph.setEdge('B', 'C', 'B_C')
+convertGraph.setEdge('B', 'D', 'B_D')
+
+processGraph.setNode('STDIN', 'motherNode')
+processGraph.setNode('STDIN_OUT_1', 'A')
+processGraph.setNode('INC_IN_1', 'D')
+processGraph.setNode('INC', 'motherNode')
+processGraph.setNode('INC_OUT_1', 'B')
+processGraph.setNode('STDOUT_IN_1', 'C')
+processGraph.setNode('STDOUT', 'motherNode')
+
+processGraph.setEdge('STDIN', 'STDIN_OUT_1', 'motherEdge_out')
+processGraph.setEdge('STDIN_OUT_1', 'INC_IN_1', 'edge')
+processGraph.setEdge('INC_IN_1', 'INC', 'motherEdge_in')
+processGraph.setEdge('INC', 'INC_OUT_1', 'motherEdge_out')
+processGraph.setEdge('INC_OUT_1', 'STDOUT_IN_1', 'edge')
+processGraph.setEdge('STDOUT_IN_1', 'STDOUT', 'motherEdge_in')
+
+describe('Dynamic type network graph', function () {
+  it('Creates a processgraph with the same nodes', function () {
+    var d = dtypenet.addTypeConverting(processGraph, convertGraph)
+    expect(d).to.be.ok
+    expect(d.node('STDIN')).to.be.equal('motherNode')
+    expect(d.node('STDOUT')).to.be.equal('motherNode')
+    expect(d.node('INC')).to.be.equal('motherNode')
+    expect(d.node('STDIN_OUT_1')).to.be.equal('A')
+    expect(d.node('INC_IN_1')).to.be.equal('D')
+    expect(d.node('INC_OUT_1')).to.be.equal('B')
+    expect(d.node('STDOUT_IN_1')).to.be.equal('C')
+  })
+  it('Creates a processgraph with type-convertion', function () {
+    var d = dtypenet.addTypeConverting(processGraph, convertGraph)
+    expect(d.node('STDIN_OUT_1:INC_IN_1_1')).to.be.equal('A:B')
+    expect(d.node('STDIN_OUT_1:INC_IN_1_2')).to.be.equal('B:D')
+    expect(d.node('INC_OUT_1:STDOUT_IN_1_1')).to.be.equal('B:C')
+    expect(d.node('STDIN_OUT_1:INC_IN_1_1_IN_1')).to.be.equal('translator_in')
+    expect(d.node('STDIN_OUT_1:INC_IN_1_2_IN_1')).to.be.equal('translator_in')
+    expect(d.node('INC_OUT_1:STDOUT_IN_1_1_IN_1')).to.be.equal('translator_in')
+    expect(d.node('STDIN_OUT_1:INC_IN_1_1_OUT_1')).to.be.equal('translator_out')
+    expect(d.node('STDIN_OUT_1:INC_IN_1_2_OUT_1')).to.be.equal('translator_out')
+    expect(d.node('INC_OUT_1:STDOUT_IN_1_1_OUT_1')).to.be.equal('translator_out')
+  })
+  it('All nodes are connected with edges', function () {
+    var d = dtypenet.addTypeConverting(processGraph, convertGraph)
+    expect(d.edge('STDIN', 'STDIN_OUT_1')).to.be.equal('motherEdge_out')
+    expect(d.edge('STDIN_OUT_1', 'STDIN_OUT_1:INC_IN_1_1_IN_1')).to.be.equal('edge')
+    expect(d.edge('STDIN_OUT_1:INC_IN_1_1_IN_1', 'STDIN_OUT_1:INC_IN_1_1')).to.be.equal('converterEdge_in')
+    expect(d.edge('STDIN_OUT_1:INC_IN_1_1', 'STDIN_OUT_1:INC_IN_1_1_OUT_1')).to.be.equal('converterEdge_out')
+    expect(d.edge('STDIN_OUT_1:INC_IN_1_1_OUT_1', 'STDIN_OUT_1:INC_IN_1_2_IN_1')).to.be.equal('edge')
+    expect(d.edge('STDIN_OUT_1:INC_IN_1_2_IN_1', 'STDIN_OUT_1:INC_IN_1_2')).to.be.equal('converterEdge_in')
+    expect(d.edge('STDIN_OUT_1:INC_IN_1_2', 'STDIN_OUT_1:INC_IN_1_2_OUT_1')).to.be.equal('converterEdge_out')
+    expect(d.edge('STDIN_OUT_1:INC_IN_1_2_OUT_1', 'INC_IN_1')).to.be.equal('edge')
+    expect(d.edge('INC_IN_1', 'INC')).to.be.equal('motherEdge_in')
+    expect(d.edge('INC', 'INC_OUT_1')).to.be.equal('motherEdge_out')
+    expect(d.edge('INC_OUT_1', 'INC_OUT_1:STDOUT_IN_1_1_IN_1')).to.be.equal('edge')
+    expect(d.edge('INC_OUT_1:STDOUT_IN_1_1_IN_1', 'INC_OUT_1:STDOUT_IN_1_1')).to.be.equal('converterEdge_in')
+    expect(d.edge('INC_OUT_1:STDOUT_IN_1_1', 'INC_OUT_1:STDOUT_IN_1_1_OUT_1')).to.be.equal('converterEdge_out')
+    expect(d.edge('INC_OUT_1:STDOUT_IN_1_1_OUT_1', 'STDOUT_IN_1')).to.be.equal('edge')
+    expect(d.edge('STDOUT_IN_1', 'STDOUT')).to.be.equal('motherEdge_in')
+  })
+  it('The graph with added translators should not be changed', function () {
+    var d = dtypenet.addTypeConverting(processGraph, convertGraph)
+    var dtrans = dtypenet.addTypeConverting(d, convertGraph)
+    expect(d.nodes.length).to.be.equal(dtrans.nodes.length)
+    expect(d.edges.length).to.be.equal(dtrans.edges.length)
+  })
+})
