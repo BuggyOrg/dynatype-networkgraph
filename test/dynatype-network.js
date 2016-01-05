@@ -6,15 +6,15 @@ var grlib = require('graphlib')
 var fs = require('fs')
 
 var convertGraph = new grlib.Graph({ directed: true, compound: false, multigraph: false })
-var processGraph = grlib.json.read(JSON.parse(fs.readFileSync('../npg-port-remodeler/test/fixtures/testgraph.graphlib')))
+var processGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/testgraph.graphlib')))
 
 convertGraph.setNode('int', 'int')
 convertGraph.setNode('float', 'float')
 convertGraph.setNode('string', 'string')
 
-convertGraph.setEdge('int', 'float', 'int_float')
-convertGraph.setEdge('float', 'string', 'float_string')
-convertGraph.setEdge('string', 'int', 'string_int')
+convertGraph.setEdge('int', 'float', {from: 'int', to: 'float'})
+convertGraph.setEdge('float', 'string', {from: 'float', to: 'string'})
+convertGraph.setEdge('string', 'int', {from: 'string', to: 'int'})
 
 describe('Dynamic type network graph', function () {
   it('Creates a processgraph with correct translator nodes', function () {

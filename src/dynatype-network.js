@@ -1,37 +1,59 @@
+var grlib = require('graphlib')
+var compLib = require('@buggyorg/component-library').getComponentLibrary()
+
+function isInPort (node) {
+  return node['nodeType'] === 'inPort'
+}
+
+function isOutPort (node) {
+  return node['nodeType'] === 'outPort'
+}
+
+function cloneGraph (graph) {
+  return grlib.json.read(grlib.json.write(graph))
+}
+
+function processOfEdge (edgeName) {
+  return edgeName.split('_').slice(0, -2).join('_')
+}
+
+function portOfEdge (edgeName) {
+  return edgeName.split('_')[2]
+}
+
+function getMetaIdentifier (node) {
+  return node['meta']
+}
+
+function getComponent (metaIdentifier) {
+  console.log(compLib[metaIdentifier])
+  return compLib[metaIdentifier]
+}
+
 export function addTypeConverting (processGraph, convertGraph) {
-  var fs = require('fs')
-  var compLib = '../component-library/meta/'
-  var grlib = require('graphlib')
-  var newProcessGraph = processGraph
-  var edges = processGraph.edges()
+  var newProcessGraph = cloneGraph(processGraph)
   // Add Translator nodes
-  var edgeCount = processGraph.edgeCount()
-  for (var j = 0; j < edgeCount; j++) {
+  for (let edge of processGraph.edges()) {
     // Translator nodes only exist between Port
-    if ((processGraph.node(edges[j].v)['nodeType'] === 'inPort' || processGraph.node(edges[j].v)['nodeType'] === 'outPort') && (processGraph.node(edges[j].w)['nodeType'] === 'inPort' || processGraph.node(edges[j].w)['nodeType'] === 'outPort')) {
+    var v = processGraph.node(edge.v)
+    var w = processGraph.node(edge.w)
+    if ((isInPort(v) || isOutPort(v)) && (isInPort(w) || isOutPort(w))) {
+      var labelIn = edge.v
+      var labelOut = edge.w
       // get datatypes
-      var processV = edges[j].v.substring(0, edges[j].v.indexOf('_', 2))
-      var processW = edges[j].w.substring(0, edges[j].w.indexOf('_', 2))
-      var portNameV = edges[j].v.substring(edges[j].v.lastIndexOf('_') + 1)
-      var portNameW = edges[j].w.substring(edges[j].w.lastIndexOf('_') + 1)
-      var metaV = newProcessGraph.node(processV)['meta']
-      var metaW = newProcessGraph.node(processW)['meta']
-      var typeV
-      var typeW
-      if (processGraph.node(edges[j].v)['nodeType'] === 'inPort') {
-        typeV = JSON.parse(fs.readFileSync(compLib + metaV + '.json'))['inputPorts'][portNameV]
-      } else {
-        typeV = JSON.parse(fs.readFileSync(compLib + metaV + '.json'))['outputPorts'][portNameV]
-      }
-      if (processGraph.node(edges[j].w)['nodeType'] === 'inPort') {
-        typeW = JSON.parse(fs.readFileSync(compLib + metaW + '.json'))['inputPorts'][portNameW]
-      } else {
-        typeW = JSON.parse(fs.readFileSync(compLib + metaW + '.json'))['outputPorts'][portNameW]
-      }
+      var processV = processOfEdge(labelIn)
+      var processW = processOfEdge(labelOut)
+      var portNameV = portOfEdge(labelIn)
+      var portNameW = portOfEdge(labelOut)
+      var metaV = getMetaIdentifier(processGraph.node(processV))
+      var metaW = getMetaIdentifier(processGraph.node(processW))
+      console.log('MetaId ', metaV)
+      var typeV = getComponent(metaV)['inputPorts'][portNameV]
+      var typeW = getComponent(metaW)['outputPorts'][portNameW]
       // if the types are different add translator
       if (typeV !== typeW) {
-        newProcessGraph.removeEdge(edges[j].v, edges[j].w)
-        var parentV = processGraph.parent(edges[j].v)
+        newProcessGraph.removeEdge(labelIn, labelOut)
+        var parentV = processGraph.parent(labelIn)
         // datatype translator
         var dijkstra = grlib.alg.dijkstra(convertGraph, typeV)
         var way = [typeW]
@@ -40,7 +62,7 @@ export function addTypeConverting (processGraph, convertGraph) {
         }
         for (var k = way.length - 1; k >= 1; k--) {
           var number = way.length - k
-          var id = edges[j].v + ':' + edges[j].w + '_' + number
+          var id = labelIn + ':' + labelOut + '_' + number
           // translator nodes
           newProcessGraph.setNode(id, {'nodeType': 'translator', 'typeFrom': way[k], 'typeTo': way[k - 1], 'parent': parentV})
           newProcessGraph.setNode(id + '_PORT_in', {'nodeType': 'inPort_trans', 'portName': 'in'})
@@ -55,13 +77,13 @@ export function addTypeConverting (processGraph, convertGraph) {
           // edges between translators and between processes and translators
           // is first translator
           if (k === way.length - 1) {
-            newProcessGraph.setEdge(edges[j].v, id + '_PORT_in')
+            newProcessGraph.setEdge(labelIn, id + '_PORT_in')
           } else {
-            newProcessGraph.setEdge(edges[j].v + ':' + edges[j].w + '_' + (number - 1) + '_PORT_out', id + '_PORT_in')
+            newProcessGraph.setEdge(labelIn + ':' + labelOut + '_' + (number - 1) + '_PORT_out', id + '_PORT_in')
           }
           // is last translator
           if (k === 1) {
-            newProcessGraph.setEdge(id + '_PORT_out', edges[j].w)
+            newProcessGraph.setEdge(id + '_PORT_out', labelOut)
           }
         }
       }
