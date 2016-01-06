@@ -29,7 +29,7 @@ function getComponent (metaIdentifier) {
   return compLib[metaIdentifier]
 }
 
-export function addTypeConverting (processGraph, convertGraph) {
+export function addTypeConversion (processGraph, convertGraph) {
   var newProcessGraph = cloneGraph(processGraph)
   // Add Translator nodes
   for (let edge of processGraph.edges()) {

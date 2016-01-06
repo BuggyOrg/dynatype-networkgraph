@@ -18,14 +18,14 @@ convertGraph.setEdge('string', 'int', {from: 'string', to: 'int'})
 
 describe('Dynamic type network graph', function () {
   it('Creates a processgraph with correct translator nodes', function () {
-    var d = dtypenet.addTypeConverting(processGraph, convertGraph)
+    var d = dtypenet.addTypeConversion(processGraph, convertGraph)
     var curGraph = grlib.json.write(d)
     var testgraph = JSON.parse(fs.readFileSync('test/fixtures/testgraph.graphlib'))
     expect(curGraph).to.deep.equal(testgraph)
   })
   it('The graph with added translators should not be changed', function () {
-    var d = dtypenet.addTypeConverting(processGraph, convertGraph)
-    var dtrans = dtypenet.addTypeConverting(d, convertGraph)
+    var d = dtypenet.addTypeConversion(processGraph, convertGraph)
+    var dtrans = dtypenet.addTypeConversion(d, convertGraph)
     expect(d.nodes.length).to.be.equal(dtrans.nodes.length)
     expect(d.edges.length).to.be.equal(dtrans.edges.length)
   })
