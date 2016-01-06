@@ -2,10 +2,8 @@
   "name": "dynatype-network-graph",
   "version": "0.0.0",
   "description": "",
-  "main": "lib/main.js",
-  "directories": {
-    "test": "test"
-  },
+  "main": "lib/dynatype-network.js",
+  "bin" : { "ng2tng": "lib/cli.js" },
   "dependencies": {
     "@buggyorg/component-library": "^0.1.6",
     "graphlib": "^1.0.7",
