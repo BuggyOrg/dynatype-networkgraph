@@ -1,11 +1,15 @@
 {
-  "name": "dynatype-network-graph",
-  "version": "0.0.0",
+  "name": "@buggyorg/dynatype-network-graph",
+  "version": "0.1.0",
   "description": "",
   "main": "lib/dynatype-network.js",
-  "bin" : { "ng2tng": "lib/cli.js" },
+  "bin": {
+    "ng2tng": "lib/cli.js"
+  },
   "dependencies": {
     "@buggyorg/component-library": "^0.1.6",
+    "commander": "^2.9.0",
+    "get-stdin": "^5.0.1",
     "graphlib": "^1.0.7",
     "standard": "^5.4.1"
   },
