@@ -26,7 +26,6 @@ function getMetaIdentifier (node) {
 }
 
 function getComponent (metaIdentifier) {
-  console.log(compLib[metaIdentifier])
   return compLib[metaIdentifier]
 }
 
@@ -47,7 +46,6 @@ export function addTypeConverting (processGraph, convertGraph) {
       var portNameW = portOfEdge(labelOut)
       var metaV = getMetaIdentifier(processGraph.node(processV))
       var metaW = getMetaIdentifier(processGraph.node(processW))
-      console.log('MetaId ', metaV)
       var typeV = getComponent(metaV)['inputPorts'][portNameV]
       var typeW = getComponent(metaW)['outputPorts'][portNameW]
       // if the types are different add translator
