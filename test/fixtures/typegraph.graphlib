@@ -1,0 +1,48 @@
+{
+  "options": {
+    "directed": true,
+    "multigraph": true,
+    "compound": true
+  },
+  "nodes": [
+    {
+      "v": "int",
+      "value": {}
+    },
+    {
+      "v": "float",
+      "value": {}
+    },
+    {
+      "v": "string",
+      "value": {}
+    }
+  ],
+  "edges": [
+    {
+      "v": "int",
+      "w": "float",
+      "value": {
+        "from": "int",
+        "to": "float"
+      }
+    },
+    {
+      "v": "float",
+      "w": "string",
+      "value": {
+        "from": "float",
+        "to": "string"
+      }
+    },
+    {
+      "v": "string",
+      "w": "int",
+      "value": {
+        "from": "string",
+        "to": "int"
+      }
+    }
+  ],
+  "value": {}
+}

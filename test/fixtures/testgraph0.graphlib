@@ -1,0 +1,173 @@
+{
+  "options": {
+    "directed": true,
+    "multigraph": false,
+    "compound": true
+  },
+  "nodes": [
+    {
+      "v": "EXAMPLE1",
+      "value": {}
+    },
+    {
+      "v": "0_STDIN",
+      "value": {
+        "nodeType": "process",
+        "meta": "io/stdin",
+        "type": "atomic",
+        "parent": "EXAMPLE1"
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "1_INC",
+      "value": {
+        "nodeType": "process",
+        "meta": "math/inc",
+        "type": "composite",
+        "parent": "EXAMPLE1"
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "2_STDOUT",
+      "value": {
+        "nodeType": "process",
+        "meta": "io/stdout",
+        "type": "atomic",
+        "parent": "EXAMPLE1"
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "3_ADD",
+      "value": {
+        "nodeType": "process",
+        "meta": "math/add",
+        "type": "atomic",
+        "parent": "1_INC"
+      },
+      "parent": "1_INC"
+    },
+    {
+      "v": "4_CONST1",
+      "value": {
+        "nodeType": "process",
+        "meta": "math/const1",
+        "type": "atomic",
+        "parent": "1_INC"
+      },
+      "parent": "1_INC"
+    },
+    {
+      "v": "1_INC_PORT_i",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "i"
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "0_STDIN_PORT_output",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "output"
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "2_STDOUT_PORT_input",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "input"
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "1_INC_PORT_inc",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "inc"
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "3_ADD_PORT_s1",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "s1"
+      },
+      "parent": "1_INC"
+    },
+    {
+      "v": "3_ADD_PORT_s2",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "s2"
+      },
+      "parent": "1_INC"
+    },
+    {
+      "v": "4_CONST1_PORT_const1",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "const1"
+      },
+      "parent": "1_INC"
+    },
+    {
+      "v": "3_ADD_PORT_sum",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "sum"
+      },
+      "parent": "1_INC"
+    }
+  ],
+  "edges": [
+    {
+      "v": "0_STDIN",
+      "w": "0_STDIN_PORT_output"
+    },
+    {
+      "v": "0_STDIN_PORT_output",
+      "w": "1_INC_PORT_i"
+    },
+    {
+      "v": "2_STDOUT_PORT_input",
+      "w": "2_STDOUT"
+    },
+    {
+      "v": "1_INC_PORT_inc",
+      "w": "2_STDOUT_PORT_input"
+    },
+    {
+      "v": "3_ADD_PORT_s1",
+      "w": "3_ADD"
+    },
+    {
+      "v": "1_INC_PORT_i",
+      "w": "3_ADD_PORT_s1"
+    },
+    {
+      "v": "3_ADD_PORT_s2",
+      "w": "3_ADD"
+    },
+    {
+      "v": "4_CONST1",
+      "w": "4_CONST1_PORT_const1"
+    },
+    {
+      "v": "4_CONST1_PORT_const1",
+      "w": "3_ADD_PORT_s2"
+    },
+    {
+      "v": "3_ADD",
+      "w": "3_ADD_PORT_sum"
+    },
+    {
+      "v": "3_ADD_PORT_sum",
+      "w": "1_INC_PORT_inc"
+    }
+  ]
+}

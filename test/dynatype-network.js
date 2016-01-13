@@ -6,7 +6,7 @@ var grlib = require('graphlib')
 var fs = require('fs')
 
 var convertGraph = new grlib.Graph({ directed: true, compound: false, multigraph: false })
-var processGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/testgraph.graphlib')))
+var processGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/testgraph0.graphlib')))
 
 convertGraph.setNode('int', 'int')
 convertGraph.setNode('float', 'float')

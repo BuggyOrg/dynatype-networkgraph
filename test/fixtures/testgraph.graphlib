@@ -10,9 +10,6 @@
       "value": {}
     },
     {
-      "v": "undefined"
-    },
-    {
       "v": "0_STDIN",
       "value": {
         "nodeType": "process",
@@ -125,6 +122,84 @@
         "portName": "sum"
       },
       "parent": "1_INC"
+    },
+    {
+      "v": "0_STDIN_PORT_output:1_INC_PORT_i_1",
+      "value": {
+        "nodeType": "translator",
+        "typeFrom": "string",
+        "typeTo": "int",
+        "parent": "EXAMPLE1"
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "0_STDIN_PORT_output:1_INC_PORT_i_1_PORT_in",
+      "value": {
+        "nodeType": "inPort_trans",
+        "portName": "in"
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "0_STDIN_PORT_output:1_INC_PORT_i_1_PORT_out",
+      "value": {
+        "nodeType": "outPort_trans",
+        "portName": "out"
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "1_INC_PORT_inc:2_STDOUT_PORT_input_1",
+      "value": {
+        "nodeType": "translator",
+        "typeFrom": "int",
+        "typeTo": "float",
+        "parent": "EXAMPLE1"
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "1_INC_PORT_inc:2_STDOUT_PORT_input_1_PORT_in",
+      "value": {
+        "nodeType": "inPort_trans",
+        "portName": "in"
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "1_INC_PORT_inc:2_STDOUT_PORT_input_1_PORT_out",
+      "value": {
+        "nodeType": "outPort_trans",
+        "portName": "out"
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "1_INC_PORT_inc:2_STDOUT_PORT_input_2",
+      "value": {
+        "nodeType": "translator",
+        "typeFrom": "float",
+        "typeTo": "string",
+        "parent": "EXAMPLE1"
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "1_INC_PORT_inc:2_STDOUT_PORT_input_2_PORT_in",
+      "value": {
+        "nodeType": "inPort_trans",
+        "portName": "in"
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "1_INC_PORT_inc:2_STDOUT_PORT_input_2_PORT_out",
+      "value": {
+        "nodeType": "outPort_trans",
+        "portName": "out"
+      },
+      "parent": "EXAMPLE1"
     }
   ],
   "edges": [
@@ -133,16 +208,8 @@
       "w": "0_STDIN_PORT_output"
     },
     {
-      "v": "0_STDIN_PORT_output",
-      "w": "1_INC_PORT_i"
-    },
-    {
       "v": "2_STDOUT_PORT_input",
       "w": "2_STDOUT"
-    },
-    {
-      "v": "1_INC_PORT_inc",
-      "w": "2_STDOUT_PORT_input"
     },
     {
       "v": "3_ADD_PORT_s1",
@@ -171,6 +238,50 @@
     {
       "v": "3_ADD_PORT_sum",
       "w": "1_INC_PORT_inc"
+    },
+    {
+      "v": "0_STDIN_PORT_output:1_INC_PORT_i_1_PORT_in",
+      "w": "0_STDIN_PORT_output:1_INC_PORT_i_1"
+    },
+    {
+      "v": "0_STDIN_PORT_output:1_INC_PORT_i_1",
+      "w": "0_STDIN_PORT_output:1_INC_PORT_i_1_PORT_out"
+    },
+    {
+      "v": "0_STDIN_PORT_output",
+      "w": "0_STDIN_PORT_output:1_INC_PORT_i_1_PORT_in"
+    },
+    {
+      "v": "0_STDIN_PORT_output:1_INC_PORT_i_1_PORT_out",
+      "w": "1_INC_PORT_i"
+    },
+    {
+      "v": "1_INC_PORT_inc:2_STDOUT_PORT_input_1_PORT_in",
+      "w": "1_INC_PORT_inc:2_STDOUT_PORT_input_1"
+    },
+    {
+      "v": "1_INC_PORT_inc:2_STDOUT_PORT_input_1",
+      "w": "1_INC_PORT_inc:2_STDOUT_PORT_input_1_PORT_out"
+    },
+    {
+      "v": "1_INC_PORT_inc",
+      "w": "1_INC_PORT_inc:2_STDOUT_PORT_input_1_PORT_in"
+    },
+    {
+      "v": "1_INC_PORT_inc:2_STDOUT_PORT_input_2_PORT_in",
+      "w": "1_INC_PORT_inc:2_STDOUT_PORT_input_2"
+    },
+    {
+      "v": "1_INC_PORT_inc:2_STDOUT_PORT_input_2",
+      "w": "1_INC_PORT_inc:2_STDOUT_PORT_input_2_PORT_out"
+    },
+    {
+      "v": "1_INC_PORT_inc:2_STDOUT_PORT_input_1_PORT_out",
+      "w": "1_INC_PORT_inc:2_STDOUT_PORT_input_2_PORT_in"
+    },
+    {
+      "v": "1_INC_PORT_inc:2_STDOUT_PORT_input_2_PORT_out",
+      "w": "2_STDOUT_PORT_input"
     }
   ]
 }

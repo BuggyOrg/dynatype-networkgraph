@@ -18,7 +18,7 @@ function processOfEdge (edgeName) {
 }
 
 function portOfEdge (edgeName) {
-  return edgeName.split('_')[2]
+  return edgeName.split('_')[3]
 }
 
 function getMetaIdentifier (node) {
@@ -33,10 +33,10 @@ export function addTypeConversion (processGraph, convertGraph) {
   var newProcessGraph = cloneGraph(processGraph)
   // Add Translator nodes
   for (let edge of processGraph.edges()) {
-    // Translator nodes only exist between Port
+    // Translator nodes only exist between Ports
     var v = processGraph.node(edge.v)
     var w = processGraph.node(edge.w)
-    if ((isInPort(v) || isOutPort(v)) && (isInPort(w) || isOutPort(w))) {
+    if (isOutPort(v) && isInPort(w)) {
       var labelIn = edge.v
       var labelOut = edge.w
       // get datatypes
@@ -46,8 +46,8 @@ export function addTypeConversion (processGraph, convertGraph) {
       var portNameW = portOfEdge(labelOut)
       var metaV = getMetaIdentifier(processGraph.node(processV))
       var metaW = getMetaIdentifier(processGraph.node(processW))
-      var typeV = getComponent(metaV)['inputPorts'][portNameV]
-      var typeW = getComponent(metaW)['outputPorts'][portNameW]
+      var typeV = getComponent(metaV)['outputPorts'][portNameV]
+      var typeW = getComponent(metaW)['inputPorts'][portNameW]
       // if the types are different add translator
       if (typeV !== typeW) {
         newProcessGraph.removeEdge(labelIn, labelOut)
