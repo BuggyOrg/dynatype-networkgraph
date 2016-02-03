@@ -126,9 +126,9 @@
     {
       "v": "0_STDIN_PORT_output:1_INC_PORT_i_1",
       "value": {
-        "nodeType": "translator",
-        "typeFrom": "string",
-        "typeTo": "int",
+        "nodeType": "process",
+        "meta": "translator/string_to_int",
+        "type": "atomic",
         "parent": "EXAMPLE1"
       },
       "parent": "EXAMPLE1"
@@ -136,25 +136,27 @@
     {
       "v": "0_STDIN_PORT_output:1_INC_PORT_i_1_PORT_in",
       "value": {
-        "nodeType": "inPort_trans",
-        "portName": "in"
+        "nodeType": "inPort",
+        "portName": "input",
+        "isTrans": true
       },
       "parent": "EXAMPLE1"
     },
     {
       "v": "0_STDIN_PORT_output:1_INC_PORT_i_1_PORT_out",
       "value": {
-        "nodeType": "outPort_trans",
-        "portName": "out"
+        "nodeType": "outPort",
+        "portName": "output",
+        "isTrans": true
       },
       "parent": "EXAMPLE1"
     },
     {
       "v": "1_INC_PORT_inc:2_STDOUT_PORT_input_1",
       "value": {
-        "nodeType": "translator",
-        "typeFrom": "int",
-        "typeTo": "float",
+        "nodeType": "process",
+        "meta": "translator/int_to_string",
+        "type": "atomic",
         "parent": "EXAMPLE1"
       },
       "parent": "EXAMPLE1"
@@ -162,42 +164,18 @@
     {
       "v": "1_INC_PORT_inc:2_STDOUT_PORT_input_1_PORT_in",
       "value": {
-        "nodeType": "inPort_trans",
-        "portName": "in"
+        "nodeType": "inPort",
+        "portName": "input",
+        "isTrans": true
       },
       "parent": "EXAMPLE1"
     },
     {
       "v": "1_INC_PORT_inc:2_STDOUT_PORT_input_1_PORT_out",
       "value": {
-        "nodeType": "outPort_trans",
-        "portName": "out"
-      },
-      "parent": "EXAMPLE1"
-    },
-    {
-      "v": "1_INC_PORT_inc:2_STDOUT_PORT_input_2",
-      "value": {
-        "nodeType": "translator",
-        "typeFrom": "float",
-        "typeTo": "string",
-        "parent": "EXAMPLE1"
-      },
-      "parent": "EXAMPLE1"
-    },
-    {
-      "v": "1_INC_PORT_inc:2_STDOUT_PORT_input_2_PORT_in",
-      "value": {
-        "nodeType": "inPort_trans",
-        "portName": "in"
-      },
-      "parent": "EXAMPLE1"
-    },
-    {
-      "v": "1_INC_PORT_inc:2_STDOUT_PORT_input_2_PORT_out",
-      "value": {
-        "nodeType": "outPort_trans",
-        "portName": "out"
+        "nodeType": "outPort",
+        "portName": "output",
+        "isTrans": true
       },
       "parent": "EXAMPLE1"
     }
@@ -268,19 +246,7 @@
       "w": "1_INC_PORT_inc:2_STDOUT_PORT_input_1_PORT_in"
     },
     {
-      "v": "1_INC_PORT_inc:2_STDOUT_PORT_input_2_PORT_in",
-      "w": "1_INC_PORT_inc:2_STDOUT_PORT_input_2"
-    },
-    {
-      "v": "1_INC_PORT_inc:2_STDOUT_PORT_input_2",
-      "w": "1_INC_PORT_inc:2_STDOUT_PORT_input_2_PORT_out"
-    },
-    {
       "v": "1_INC_PORT_inc:2_STDOUT_PORT_input_1_PORT_out",
-      "w": "1_INC_PORT_inc:2_STDOUT_PORT_input_2_PORT_in"
-    },
-    {
-      "v": "1_INC_PORT_inc:2_STDOUT_PORT_input_2_PORT_out",
       "w": "2_STDOUT_PORT_input"
     }
   ]

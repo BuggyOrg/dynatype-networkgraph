@@ -9,11 +9,9 @@ var convertGraph = new grlib.Graph({ directed: true, compound: false, multigraph
 var processGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/testgraph0.graphlib')))
 
 convertGraph.setNode('int', 'int')
-convertGraph.setNode('float', 'float')
 convertGraph.setNode('string', 'string')
 
-convertGraph.setEdge('int', 'float', {from: 'int', to: 'float'})
-convertGraph.setEdge('float', 'string', {from: 'float', to: 'string'})
+convertGraph.setEdge('int', 'string', {from: 'int', to: 'string'})
 convertGraph.setEdge('string', 'int', {from: 'string', to: 'int'})
 
 describe('Dynamic type network graph', function () {

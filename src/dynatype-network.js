@@ -2,11 +2,11 @@ var grlib = require('graphlib')
 var compLib = require('@buggyorg/component-library').getComponentLibrary()
 
 function isInPort (node) {
-  return node['nodeType'] === 'inPort'
+  return (node['nodeType'] === 'inPort' && node['isTrans'] === undefined && !node['isTrans'])
 }
 
 function isOutPort (node) {
-  return node['nodeType'] === 'outPort'
+  return (node['nodeType'] === 'outPort' && node['isTrans'] === undefined && !node['isTrans'])
 }
 
 function cloneGraph (graph) {
@@ -62,9 +62,11 @@ export function addTypeConversion (processGraph, convertGraph) {
           var number = way.length - k
           var id = labelIn + ':' + labelOut + '_' + number
           // translator nodes
-          newProcessGraph.setNode(id, {'nodeType': 'translator', 'typeFrom': way[k], 'typeTo': way[k - 1], 'parent': parentV})
-          newProcessGraph.setNode(id + '_PORT_in', {'nodeType': 'inPort_trans', 'portName': 'in'})
-          newProcessGraph.setNode(id + '_PORT_out', {'nodeType': 'outPort_trans', 'portName': 'out'})
+          newProcessGraph.setNode(id, {'nodeType': 'process', 'typeFrom': way[k], 'typeTo': way[k - 1], 'parent': parentV})
+          var meta = 'translator/' + way[k] + '_to_' + way[k - 1]
+          newProcessGraph.setNode(id, {'nodeType': 'process', 'meta': meta, 'type': 'atomic', 'parent': parentV})
+          newProcessGraph.setNode(id + '_PORT_in', {'nodeType': 'inPort', 'portName': 'input', 'isTrans': true})
+          newProcessGraph.setNode(id + '_PORT_out', {'nodeType': 'outPort', 'portName': 'output', 'isTrans': true})
           // translator edges
           newProcessGraph.setEdge(id + '_PORT_in', id)
           newProcessGraph.setEdge(id, id + '_PORT_out')
@@ -87,6 +89,7 @@ export function addTypeConversion (processGraph, convertGraph) {
       }
     }
   }
-  // fs.writeFileSync('test/fixtures/testgraph.graphlib', JSON.stringify(grlib.json.write(newProcessGraph), null, 2))
+  var fs = require('fs')
+  fs.writeFileSync('test/fixtures/testgraph.graphlib', JSON.stringify(grlib.json.write(newProcessGraph), null, 2))
   return newProcessGraph
 }
