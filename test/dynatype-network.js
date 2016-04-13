@@ -7,6 +7,8 @@ var fs = require('fs')
 
 var convertGraph = new grlib.Graph({ directed: true, compound: false, multigraph: false })
 var processGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/testgraph0.graphlib')))
+var processGraphGeneric = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/testgraph0_generics.graphlib')))
+var processGraphGeneric2 = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/testgraph0_generics2.graphlib')))
 
 convertGraph.setNode('int', 'int')
 convertGraph.setNode('string', 'string')
@@ -18,6 +20,7 @@ describe('Dynamic type network graph', function () {
   it('Creates a processgraph with correct translator nodes', function () {
     var d = dtypenet.addTypeConversion(processGraph, convertGraph)
     var curGraph = grlib.json.write(d)
+    // fs.writeFileSync('test/fixtures/testgraph.graphlib', JSON.stringify(grlib.json.write(d), null, 2))
     var testgraph = JSON.parse(fs.readFileSync('test/fixtures/testgraph.graphlib'))
     expect(curGraph).to.deep.equal(testgraph)
   })
@@ -26,5 +29,21 @@ describe('Dynamic type network graph', function () {
     var dtrans = dtypenet.addTypeConversion(d, convertGraph)
     expect(d.nodes.length).to.be.equal(dtrans.nodes.length)
     expect(d.edges.length).to.be.equal(dtrans.edges.length)
+  })
+  it('Creates a processgraph with correct translator nodes without generics simple', function () {
+    var g = dtypenet.replaceGenerics(processGraphGeneric)
+    var d = dtypenet.addTypeConversion(g, convertGraph)
+    var curGraph = grlib.json.write(d)
+    // fs.writeFileSync('test/fixtures/testgraph_generics.graphlib', JSON.stringify(grlib.json.write(d), null, 2))
+    var testgraph = JSON.parse(fs.readFileSync('test/fixtures/testgraph_generics.graphlib'))
+    expect(curGraph).to.deep.equal(testgraph)
+  })
+  it('Creates a processgraph with correct translator nodes without generics complex', function () {
+    var g = dtypenet.replaceGenerics(processGraphGeneric2)
+    var d = dtypenet.addTypeConversion(g, convertGraph)
+    var curGraph = grlib.json.write(d)
+    // fs.writeFileSync('test/fixtures/testgraph_generics2.graphlib', JSON.stringify(grlib.json.write(d), null, 2))
+    var testgraph = JSON.parse(fs.readFileSync('test/fixtures/testgraph_generics2.graphlib'))
+    expect(curGraph).to.deep.equal(testgraph)
   })
 })

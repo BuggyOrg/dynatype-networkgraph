@@ -1,5 +1,6 @@
 var grlib = require('graphlib')
-// var compLib = require('@buggyorg/component-library').getComponentLibrary()
+// var graphtools = require('@buggyorg/graphtools')
+import * as graphtools from '@buggyorg/graphtools'
 
 function isInPort (node) {
   return (node['nodeType'] === 'inPort' && node['isTrans'] === undefined && !node['isTrans'])
@@ -22,18 +23,6 @@ function portOfEdge (graph, nodeName) {
   return graph.node(nodeName)['portName']
 }
 
-// function getMetaIdentifier (node) {
-//  return node['meta']
-// }
-
-// function getComponent (metaIdentifier) {
-//   return compLib[metaIdentifier]
-// }
-
-// function getInputs (graph, nodeId) {
-//  return graph.node(nodeId)['inputPorts']
-// }
-
 function getOutputs (graph, nodeId) {
   return graph.node(nodeId)['outputPorts']
 }
@@ -42,16 +31,66 @@ function getInputs (graph, nodeId) {
   return graph.node(nodeId)['inputPorts']
 }
 
-// export function replaceGenerics (processGraph) {
-// }
+function genericInputs (graph, node) {
+  var genericInputs = []
+  if (graph.node(node)['inputPorts'] !== undefined) {
+    var inputPorts = graph.node(node)['inputPorts']
+    var inputNames = Object.keys(inputPorts)
+    for (var i = 0; i < inputNames.length; i++) {
+      if (inputPorts[inputNames[i]] === 'generic') {
+        genericInputs = genericInputs.concat([inputNames[i]])
+      }
+    }
+  }
+  return genericInputs
+}
+
+function genericOutputs (graph, node) {
+  var genericOutputs = []
+  if (graph.node(node)['outputPorts'] !== undefined) {
+    var outputPorts = graph.node(node)['outputPorts']
+    var outputNames = Object.keys(outputPorts)
+    for (var i = 0; i < outputNames.length; i++) {
+      if (outputPorts[outputNames[i]] === 'generic') {
+        genericOutputs = genericOutputs.concat([outputNames[i]])
+      }
+    }
+  }
+  return genericOutputs
+}
+
+export function replaceGenerics (processGraph) {
+  var nodes = processGraph.nodes()
+  for (var j = 0; j < nodes.length; j++) {
+    var paths = graphtools.walkPort.walkBack(processGraph, nodes[j], genericInputs)
+    var path = paths[0]
+    if (path.length >= 2) {
+      var genericInput = genericInputs(processGraph, path[1])
+      // Alle generic inputs gleich für einen Knoten ???
+      var outputs = graphtools['walkPort'].predecessorPort(processGraph, path[1], genericInput[0])
+      var type = processGraph.node(path[0])['outputPorts'][outputs[0]]
+      for (var k = 1; k < path.length; k++) {
+        genericInput = genericInputs(processGraph, path[k])
+        for (var l = 0; l < genericInput.length; l++) {
+          processGraph.node(path[k])['inputPorts'][genericInput[l]] = type
+        }
+        var genericOutput = genericOutputs(processGraph, path[k])
+        for (var m = 0; m < genericOutput.length; m++) {
+          processGraph.node(path[k])['outputPorts'][genericOutput[m]] = type
+        }
+      }
+    }
+  }
+  return processGraph
+}
 
 export function addTypeConversion (processGraph, convertGraph) {
   var newProcessGraph = cloneGraph(processGraph)
   // Add Translator nodes
-  for (let edge of processGraph.edges()) {
+  for (let edge of newProcessGraph.edges()) {
     // Translator nodes only exist between Ports
-    var v = processGraph.node(edge.v)
-    var w = processGraph.node(edge.w)
+    var v = newProcessGraph.node(edge.v)
+    var w = newProcessGraph.node(edge.w)
     if (isOutPort(v) && isInPort(w)) {
       var labelIn = edge.v
       var labelOut = edge.w
@@ -60,16 +99,10 @@ export function addTypeConversion (processGraph, convertGraph) {
       var processW = processOfEdge(labelOut)
       var portNameV = portOfEdge(newProcessGraph, labelIn)
       var portNameW = portOfEdge(newProcessGraph, labelOut)
-      // var metaV = getMetaIdentifier(processGraph.node(processV))
-      // var metaW = getMetaIdentifier(processGraph.node(processW))
-      // var typeV = getComponent(metaV)['outputPorts'][portNameV]
-      // var typeW = getComponent(metaW)['inputPorts'][portNameW]
-
       var typeV = getOutputs(newProcessGraph, processV)[portNameV]
-      console.log(getOutputs(newProcessGraph, processW))
-
+      // console.log(typeV)
       var typeW = getInputs(newProcessGraph, processW)[portNameW]
-      console.log(typeW)
+
       // if the types are different add translator
       if (typeV !== typeW) {
         newProcessGraph.removeEdge(labelIn, labelOut)
@@ -77,7 +110,6 @@ export function addTypeConversion (processGraph, convertGraph) {
         // datatype translator
         var dijkstra = grlib.alg.dijkstra(convertGraph, typeV)
         var way = [typeW]
-        console.log(typeW)
         while (way[way.length - 1] !== typeV) {
           way.push(dijkstra[way[way.length - 1]].predecessor)
         }
@@ -85,9 +117,9 @@ export function addTypeConversion (processGraph, convertGraph) {
           var number = way.length - k
           var id = labelIn + ':' + labelOut + '_' + number
           // translator nodes
-          newProcessGraph.setNode(id, {'nodeType': 'process', 'typeFrom': way[k], 'typeTo': way[k - 1], 'parent': parentV})
+          // newProcessGraph.setNode(id, {'nodeType': 'process', 'typeFrom': way[k], 'typeTo': way[k - 1]})
           var meta = 'translator/' + way[k] + '_to_' + way[k - 1]
-          newProcessGraph.setNode(id, {'nodeType': 'process', 'meta': meta, 'type': 'atomic', 'parent': parentV})
+          newProcessGraph.setNode(id, {'nodeType': 'process', 'id': meta, 'atomic': 'true'})
           newProcessGraph.setNode(id + '_PORT_in', {'nodeType': 'inPort', 'portName': 'input', 'isTrans': true})
           newProcessGraph.setNode(id + '_PORT_out', {'nodeType': 'outPort', 'portName': 'output', 'isTrans': true})
           // translator edges
@@ -112,7 +144,5 @@ export function addTypeConversion (processGraph, convertGraph) {
       }
     }
   }
-  // var fs = require('fs')
-  // fs.writeFileSync('test/fixtures/testgraph.graphlib', JSON.stringify(grlib.json.write(newProcessGraph), null, 2))
   return newProcessGraph
 }

@@ -147,9 +147,8 @@
       "v": "0_STDIN_PORT_output:1_INC_PORT_i_1",
       "value": {
         "nodeType": "process",
-        "meta": "translator/string_to_int",
-        "type": "atomic",
-        "parent": "EXAMPLE1"
+        "id": "translator/string_to_int",
+        "atomic": "true"
       },
       "parent": "EXAMPLE1"
     },
@@ -175,9 +174,8 @@
       "v": "1_INC_PORT_inc:2_STDOUT_PORT_input_1",
       "value": {
         "nodeType": "process",
-        "meta": "translator/int_to_string",
-        "type": "atomic",
-        "parent": "EXAMPLE1"
+        "id": "translator/int_to_string",
+        "atomic": "true"
       },
       "parent": "EXAMPLE1"
     },

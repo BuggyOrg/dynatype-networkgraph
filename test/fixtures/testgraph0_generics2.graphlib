@@ -1,0 +1,246 @@
+{
+  "options": {
+    "directed": true,
+    "multigraph": false,
+    "compound": true
+  },
+  "nodes": [
+    {
+      "v": "EXAMPLE1",
+      "value": {}
+    },
+    {
+      "v": "0_CONST1",
+      "value": {
+        "nodeType": "process",
+        "id": "math/const1",
+        "version": "0.1.0",
+        "inputPorts": {},
+        "outputPorts": {
+          "const1": "int"
+        },
+        "atomic": true
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "1_CONST2",
+      "value": {
+        "nodeType": "process",
+        "id": "math/const2",
+        "version": "0.1.0",
+        "inputPorts": {},
+        "outputPorts": {
+          "const2": "bool"
+        },
+        "atomic": true
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "2_DEMUX",
+      "value": {
+        "nodeType": "process",
+        "name": "DEMUX",
+        "id": "logic/demux",
+        "inputPorts": {
+          "input": "generic",
+          "control": "bool"
+        },
+        "outputPorts": {
+          "outTrue": "generic",
+          "outFalse": "generic"
+        },
+        "atomic": true,
+        "version": "0.1.0"
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "3_STDOUT",
+      "value": {
+        "nodeType": "process",
+        "id": "io/stdout",
+        "version": "0.1.0",
+        "inputPorts": {
+          "input": "string"
+        },
+        "outputPorts": {},
+        "atomic": true
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "4_STDOUT",
+      "value": {
+        "nodeType": "process",
+        "id": "io/stdout",
+        "version": "0.1.0",
+        "inputPorts": {
+          "input": "string"
+        },
+        "outputPorts": {},
+        "atomic": true
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "5_INC",
+      "value": {
+        "nodeType": "process",
+        "meta": "math/inc",
+        "type": "composite",
+        "parent": "EXAMPLE1",
+        "inputPorts": {
+          "i": "generic"
+        },
+        "outputPorts": {
+          "inc": "generic"
+        }
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "5_INC_PORT_i",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "i"
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "5_INC_PORT_inc",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "inc"
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "0_CONST1_PORT_const1",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "const1"
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "1_CONST2_PORT_const2",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "const2"
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "2_DEMUX_PORT_input",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "input"
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "2_DEMUX_PORT_control",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "control"
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "2_DEMUX_PORT_outTrue",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "outTrue"
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "2_DEMUX_PORT_outFalse",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "outFalse"
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "3_STDOUT_PORT_input",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "input"
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "4_STDOUT_PORT_input",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "input"
+      },
+      "parent": "EXAMPLE1"
+    }
+  ],
+  "edges": [
+    {
+      "v": "0_CONST1",
+      "w": "0_CONST1_PORT_const1"
+    },
+    {
+      "v": "1_CONST2",
+      "w": "1_CONST2_PORT_const2"
+    },
+    {
+      "v": "1_CONST2_PORT_const2",
+      "w": "2_DEMUX_PORT_control"
+    },
+    {
+      "v": "0_CONST1_PORT_const1",
+      "w": "2_DEMUX_PORT_input"
+    },
+    {
+      "v": "2_DEMUX_PORT_input",
+      "w": "2_DEMUX"
+    },
+    {
+      "v": "2_DEMUX_PORT_control",
+      "w": "2_DEMUX"
+    },
+    {
+      "v": "2_DEMUX",
+      "w": "2_DEMUX_PORT_outTrue"
+    },
+    {
+      "v": "2_DEMUX",
+      "w": "2_DEMUX_PORT_outFalse"
+    },
+    {
+      "v": "2_DEMUX_PORT_outTrue",
+      "w": "5_INC_PORT_i"
+    },
+    {
+      "v": "5_INC_PORT_i",
+      "w": "5_INC"
+    },
+    {
+      "v": "5_INC",
+      "w": "5_INC_PORT_inc"
+    },
+    {
+      "v": "5_INC_PORT_inc",
+      "w": "3_STDOUT_PORT_input"
+    },
+    {
+      "v": "2_DEMUX_PORT_outFalse",
+      "w": "4_STDOUT_PORT_input"
+    },
+    {
+      "v": "3_STDOUT_PORT_input",
+      "w": "3_STDOUT"
+    },
+    {
+      "v": "4_STDOUT_PORT_input",
+      "w": "4_STDOUT"
+    }
+  ]
+}
