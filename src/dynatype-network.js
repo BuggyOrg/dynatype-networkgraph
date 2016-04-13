@@ -66,7 +66,6 @@ export function replaceGenerics (processGraph) {
     var path = paths[0]
     if (path.length >= 2) {
       var genericInput = genericInputs(processGraph, path[1])
-      // Alle generic inputs gleich für einen Knoten ???
       var outputs = graphtools['walkPort'].predecessorPort(processGraph, path[1], genericInput[0])
       var type = processGraph.node(path[0])['outputPorts'][outputs[0]]
       for (var k = 1; k < path.length; k++) {
@@ -100,7 +99,6 @@ export function addTypeConversion (processGraph, convertGraph) {
       var portNameV = portOfEdge(newProcessGraph, labelIn)
       var portNameW = portOfEdge(newProcessGraph, labelOut)
       var typeV = getOutputs(newProcessGraph, processV)[portNameV]
-      // console.log(typeV)
       var typeW = getInputs(newProcessGraph, processW)[portNameW]
 
       // if the types are different add translator
