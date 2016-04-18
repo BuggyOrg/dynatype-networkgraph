@@ -9,6 +9,7 @@ var convertGraph = new grlib.Graph({ directed: true, compound: false, multigraph
 var processGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/testgraph0.graphlib')))
 var processGraphGeneric = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/testgraph0_generics.graphlib')))
 var processGraphGeneric2 = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/testgraph0_generics2.graphlib')))
+var facGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/fac.json')))
 
 convertGraph.setNode('int', 'int')
 convertGraph.setNode('string', 'string')
@@ -44,6 +45,13 @@ describe('Dynamic type network graph', function () {
     var curGraph = grlib.json.write(d)
     // fs.writeFileSync('test/fixtures/testgraph_generics2.graphlib', JSON.stringify(grlib.json.write(d), null, 2))
     var testgraph = JSON.parse(fs.readFileSync('test/fixtures/testgraph_generics2.graphlib'))
+    expect(curGraph).to.deep.equal(testgraph)
+  })
+  it('Creates a processgraph without generics very complex', function () {
+    var g = dtypenet.replaceGenerics(facGraph)
+    var curGraph = grlib.json.write(g)
+    // fs.writeFileSync('test/fixtures/facGraph.graphlib', JSON.stringify(grlib.json.write(g), null, 2))
+    var testgraph = JSON.parse(fs.readFileSync('test/fixtures/facGraph.graphlib', 'utf8'))
     expect(curGraph).to.deep.equal(testgraph)
   })
 })
