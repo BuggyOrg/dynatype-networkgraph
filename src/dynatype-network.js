@@ -63,19 +63,21 @@ export function replaceGenerics (processGraph) {
   var nodes = processGraph.nodes()
   for (var j = 0; j < nodes.length; j++) {
     var paths = graphtools.walkPort.walkBack(processGraph, nodes[j], genericInputs)
-    var path = paths[0]
-    if (path.length >= 2) {
-      var genericInput = genericInputs(processGraph, path[1])
-      var outputs = graphtools['walkPort'].predecessorPort(processGraph, path[1], genericInput[0])
-      var type = processGraph.node(path[0])['outputPorts'][outputs[0]]
-      for (var k = 1; k < path.length; k++) {
-        genericInput = genericInputs(processGraph, path[k])
-        for (var l = 0; l < genericInput.length; l++) {
-          processGraph.node(path[k])['inputPorts'][genericInput[l]] = type
-        }
-        var genericOutput = genericOutputs(processGraph, path[k])
-        for (var m = 0; m < genericOutput.length; m++) {
-          processGraph.node(path[k])['outputPorts'][genericOutput[m]] = type
+    for (var i = 0; i < paths.length; i++) {
+      var path = paths[i]
+      if (path.length >= 2) {
+        var genericInput = genericInputs(processGraph, path[1])
+        var outputs = graphtools['walkPort'].predecessorPort(processGraph, path[1], genericInput[0])
+        var type = processGraph.node(path[0])['outputPorts'][outputs[0]]
+        for (var k = 1; k < path.length; k++) {
+          genericInput = genericInputs(processGraph, path[k])
+          for (var l = 0; l < genericInput.length; l++) {
+            processGraph.node(path[k])['inputPorts'][genericInput[l]] = type
+          }
+          var genericOutput = genericOutputs(processGraph, path[k])
+          for (var m = 0; m < genericOutput.length; m++) {
+            processGraph.node(path[k])['outputPorts'][genericOutput[m]] = type
+          }
         }
       }
     }

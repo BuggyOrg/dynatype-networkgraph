@@ -10,6 +10,7 @@ var processGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/t
 var processGraphGeneric = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/testgraph0_generics.graphlib')))
 var processGraphGeneric2 = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/testgraph0_generics2.graphlib')))
 var facGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/fac.json')))
+var fac2Graph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/fac2.json')))
 
 convertGraph.setNode('int', 'int')
 convertGraph.setNode('string', 'string')
@@ -52,6 +53,13 @@ describe('Dynamic type network graph', function () {
     var curGraph = grlib.json.write(g)
     // fs.writeFileSync('test/fixtures/facGraph.graphlib', JSON.stringify(grlib.json.write(g), null, 2))
     var testgraph = JSON.parse(fs.readFileSync('test/fixtures/facGraph.graphlib', 'utf8'))
+    expect(curGraph).to.deep.equal(testgraph)
+  })
+  it('Propagates generics correctly which pass hierarchy borders', () => {
+    var g = dtypenet.replaceGenerics(fac2Graph)
+    var curGraph = grlib.json.write(g)
+    // fs.writeFileSync('test/fixtures/facGraph.graphlib', JSON.stringify(grlib.json.write(g), null, 2))
+    var testgraph = JSON.parse(fs.readFileSync('test/fixtures/fac2_corr.json', 'utf8'))
     expect(curGraph).to.deep.equal(testgraph)
   })
 })
