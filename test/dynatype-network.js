@@ -62,4 +62,19 @@ describe('Dynamic type network graph', function () {
     var testgraph = JSON.parse(fs.readFileSync('test/fixtures/fac2_corr.json', 'utf8'))
     expect(curGraph).to.deep.equal(testgraph)
   })
+  it('Uses type hints to replace generics', () => {
+    var hintGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/hint1.json')))
+    var genGraph = dtypenet.replaceGenerics(hintGraph)
+    expect(genGraph.node('in').outputPorts['output']).to.equal('string')
+  })
+  it('Resolves generic arrays', () => {
+    var arrGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/arr.json')))
+    var genGraph = dtypenet.replaceGenerics(arrGraph)
+    expect(genGraph.node('out').inputPorts['input']).to.equal('[number]')
+  })
+  it('Resolves generic arrays with hints', () => {
+    var arrGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/arrHint.json')))
+    var genGraph = dtypenet.replaceGenerics(arrGraph)
+    expect(genGraph.node('out').inputPorts['input']).to.equal('[string]')
+  })
 })

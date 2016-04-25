@@ -1,5 +1,6 @@
 var grlib = require('graphlib')
 // var graphtools = require('@buggyorg/graphtools')
+import _ from 'lodash'
 import * as graphtools from '@buggyorg/graphtools'
 
 function isInPort (node) {
@@ -37,7 +38,7 @@ function genericInputs (graph, node) {
     var inputPorts = graph.node(node)['inputPorts']
     var inputNames = Object.keys(inputPorts)
     for (var i = 0; i < inputNames.length; i++) {
-      if (inputPorts[inputNames[i]] === 'generic') {
+      if (inputPorts[inputNames[i]] === 'generic' || inputPorts[inputNames[i]] === '[generic]') {
         genericInputs = genericInputs.concat([inputNames[i]])
       }
     }
@@ -59,7 +60,20 @@ function genericOutputs (graph, node) {
   return genericOutputs
 }
 
-export function replaceGenerics (processGraph) {
+function replaceTypeHints (graph) {
+  var editGraph = graphtools.utils.edit(graph)
+  _.merge(editGraph, {nodes: _.map(editGraph.nodes, (n) => {
+    if (!n.value.id) { return n }
+    return _.merge({}, n, { value: {
+      inputPorts: _.mapValues(n.value.inputPorts, (p, k) => (n.value.typeHint && n.value.typeHint[k]) ? n.value.typeHint[k] : p),
+      outputPorts: _.mapValues(n.value.outputPorts, (p, k) => (n.value.typeHint && n.value.typeHint[k]) ? n.value.typeHint[k] : p)
+    }})
+  })})
+  return graphtools.utils.finalize(editGraph)
+}
+
+export function replaceGenerics (graph) {
+  var processGraph = replaceTypeHints(graph)
   var nodes = processGraph.nodes()
   for (var j = 0; j < nodes.length; j++) {
     var paths = graphtools.walkPort.walkBack(processGraph, nodes[j], genericInputs)
