@@ -32,6 +32,12 @@ function getInputs (graph, nodeId) {
   return graph.node(nodeId)['inputPorts']
 }
 
+var replaceAll = (str, search, replacement) => {
+  // improve replacement!!
+  var repl = replacement.replace(/\[/g, '').replace(/\]/g, '')
+  return str.split(search).join(repl)
+}
+
 function genericInputs (graph, node) {
   var genericInputs = []
   if (graph.node(node)['inputPorts'] !== undefined) {
@@ -52,7 +58,7 @@ function genericOutputs (graph, node) {
     var outputPorts = graph.node(node)['outputPorts']
     var outputNames = Object.keys(outputPorts)
     for (var i = 0; i < outputNames.length; i++) {
-      if (outputPorts[outputNames[i]] === 'generic') {
+      if (outputPorts[outputNames[i]] === 'generic' || outputPorts[outputNames[i]] === '[generic]') {
         genericOutputs = genericOutputs.concat([outputNames[i]])
       }
     }
@@ -86,11 +92,13 @@ export function replaceGenerics (graph) {
         for (var k = 1; k < path.length; k++) {
           genericInput = genericInputs(processGraph, path[k])
           for (var l = 0; l < genericInput.length; l++) {
-            processGraph.node(path[k])['inputPorts'][genericInput[l]] = type
+            processGraph.node(path[k])['inputPorts'][genericInput[l]] =
+              replaceAll(processGraph.node(path[k])['inputPorts'][genericInput[l]], 'generic', type)
           }
           var genericOutput = genericOutputs(processGraph, path[k])
           for (var m = 0; m < genericOutput.length; m++) {
-            processGraph.node(path[k])['outputPorts'][genericOutput[m]] = type
+            processGraph.node(path[k])['outputPorts'][genericOutput[m]] =
+              replaceAll(processGraph.node(path[k])['outputPorts'][genericOutput[m]], 'generic', type)
           }
         }
       }
