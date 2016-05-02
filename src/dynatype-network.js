@@ -62,13 +62,19 @@ function genericOutputs (graph, node) {
 export function replaceGenerics (processGraph) {
   var nodes = processGraph.nodes()
   for (var j = 0; j < nodes.length; j++) {
+    console.log('node', nodes[j])
     var paths = graphtools.walkPort.walkBack(processGraph, nodes[j], genericInputs)
+    console.log(paths)
     for (var i = 0; i < paths.length; i++) {
       var path = paths[i]
       if (path.length >= 2) {
+        console.log('PFAD:', path)
         var genericInput = genericInputs(processGraph, path[1])
+        console.log(genericInput)
         var outputs = graphtools['walkPort'].predecessorPort(processGraph, path[1], genericInput[0])
+        console.log(outputs)
         var type = processGraph.node(path[0])['outputPorts'][outputs[0]]
+        console.log(type)
         for (var k = 1; k < path.length; k++) {
           genericInput = genericInputs(processGraph, path[k])
           for (var l = 0; l < genericInput.length; l++) {

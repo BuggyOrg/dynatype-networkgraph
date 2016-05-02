@@ -9,6 +9,7 @@ var convertGraph = new grlib.Graph({ directed: true, compound: false, multigraph
 var processGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/testgraph0.graphlib')))
 var processGraphGeneric = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/testgraph0_generics.graphlib')))
 var processGraphGeneric2 = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/testgraph0_generics2.graphlib')))
+var inc_generic = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/inc_generic.json')))
 var facGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/fac.json')))
 var fac2Graph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/fac2.json')))
 
@@ -60,6 +61,13 @@ describe('Dynamic type network graph', function () {
     var curGraph = grlib.json.write(g)
     // fs.writeFileSync('test/fixtures/facGraph.graphlib', JSON.stringify(grlib.json.write(g), null, 2))
     var testgraph = JSON.parse(fs.readFileSync('test/fixtures/fac2_corr.json', 'utf8'))
+    expect(curGraph).to.deep.equal(testgraph)
+  })
+  it('Replaces generics correctly for nodes with generic input and no generic output', () => {
+    var g = dtypenet.replaceGenerics(inc_generic)
+    var curGraph = grlib.json.write(g)
+    fs.writeFileSync('test/fixtures/inc_withoutGeneric.graphlib', JSON.stringify(grlib.json.write(g), null, 2))
+    var testgraph = JSON.parse(fs.readFileSync('test/fixtures/inc_withoutGeneric.graphlib', 'utf8'))
     expect(curGraph).to.deep.equal(testgraph)
   })
 })

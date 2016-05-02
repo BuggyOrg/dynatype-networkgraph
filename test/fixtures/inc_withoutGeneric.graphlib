@@ -1,0 +1,225 @@
+{
+  "options": {
+    "directed": true,
+    "multigraph": false,
+    "compound": true
+  },
+  "nodes": [
+    {
+      "v": "out",
+      "value": {
+        "id": "io/stdout",
+        "version": "0.1.0",
+        "inputPorts": {
+          "stdout/input": "string"
+        },
+        "outputPorts": {},
+        "atomic": true,
+        "path": [],
+        "branchPath": "out",
+        "branch": "out",
+        "name": "out",
+        "nodeType": "process"
+      }
+    },
+    {
+      "v": "in",
+      "value": {
+        "id": "io/stdin",
+        "version": "0.1.0",
+        "inputPorts": {},
+        "outputPorts": {
+          "stdin/output": "string"
+        },
+        "atomic": true,
+        "path": [],
+        "branchPath": "in",
+        "branch": "in",
+        "name": "in",
+        "nodeType": "process"
+      }
+    },
+    {
+      "v": "inc",
+      "value": {
+        "id": "math/inc",
+        "version": "0.2.0",
+        "inputPorts": {
+          "inc/i": "string"
+        },
+        "outputPorts": {
+          "inc/inc": "int"
+        },
+        "atomic": false,
+        "implementation": {
+          "nodes": [
+            {
+              "id": "math/add",
+              "version": "0.1.0",
+              "inputPorts": {
+                "add/s1": "int",
+                "add/s2": "int"
+              },
+              "outputPorts": {
+                "add/sum": "int"
+              },
+              "atomic": true,
+              "path": [
+                {
+                  "meta": "math/inc",
+                  "branch": "inc",
+                  "version": "0.2.0",
+                  "path": []
+                }
+              ],
+              "parent": "inc",
+              "branchPath": "inc:add",
+              "branch": "add",
+              "values": [
+                {
+                  "value": 1,
+                  "port": "add/s2"
+                }
+              ]
+            }
+          ],
+          "edges": [
+            {
+              "from": "inc/i",
+              "to": "add:add/s1"
+            },
+            {
+              "from": "add:add/sum",
+              "to": "inc/inc"
+            }
+          ]
+        },
+        "path": [],
+        "branchPath": "inc",
+        "branch": "inc",
+        "name": "inc",
+        "nodeType": "process"
+      }
+    },
+    {
+      "v": "inc:add",
+      "value": {
+        "id": "math/add",
+        "version": "0.1.0",
+        "inputPorts": {
+          "add/s1": "string",
+          "add/s2": "string"
+        },
+        "outputPorts": {
+          "add/sum": "int"
+        },
+        "atomic": true,
+        "path": [
+          {
+            "meta": "math/inc",
+            "branch": "inc",
+            "version": "0.2.0",
+            "path": []
+          }
+        ],
+        "parent": "inc",
+        "branchPath": "inc:add",
+        "branch": "add",
+        "values": [
+          {
+            "value": 1,
+            "port": "add/s2"
+          }
+        ],
+        "nodeType": "process"
+      },
+      "parent": "inc"
+    },
+    {
+      "v": "inc_PORT_inc/i",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "inc/i",
+        "hierarchyBorder": true,
+        "process": "inc"
+      }
+    },
+    {
+      "v": "in_PORT_stdin/output",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "stdin/output",
+        "process": "in"
+      }
+    },
+    {
+      "v": "out_PORT_stdout/input",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "stdout/input",
+        "process": "out"
+      }
+    },
+    {
+      "v": "inc_PORT_inc/inc",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "inc/inc",
+        "hierarchyBorder": true,
+        "process": "inc"
+      }
+    },
+    {
+      "v": "inc:add_PORT_add/s1",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "add/s1",
+        "process": "inc:add"
+      },
+      "parent": "inc"
+    },
+    {
+      "v": "inc:add_PORT_add/sum",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "add/sum",
+        "process": "inc:add"
+      },
+      "parent": "inc"
+    }
+  ],
+  "edges": [
+    {
+      "v": "in",
+      "w": "in_PORT_stdin/output"
+    },
+    {
+      "v": "in_PORT_stdin/output",
+      "w": "inc_PORT_inc/i"
+    },
+    {
+      "v": "out_PORT_stdout/input",
+      "w": "out"
+    },
+    {
+      "v": "inc_PORT_inc/inc",
+      "w": "out_PORT_stdout/input"
+    },
+    {
+      "v": "inc:add_PORT_add/s1",
+      "w": "inc:add"
+    },
+    {
+      "v": "inc_PORT_inc/i",
+      "w": "inc:add_PORT_add/s1"
+    },
+    {
+      "v": "inc:add",
+      "w": "inc:add_PORT_add/sum"
+    },
+    {
+      "v": "inc:add_PORT_add/sum",
+      "w": "inc_PORT_inc/inc"
+    }
+  ]
+}
