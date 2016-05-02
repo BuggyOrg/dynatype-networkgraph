@@ -10,6 +10,7 @@ var processGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/t
 var processGraphGeneric = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/testgraph0_generics.graphlib')))
 var processGraphGeneric2 = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/testgraph0_generics2.graphlib')))
 var inc_generic = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/inc_generic.json')))
+var type_error = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/type_error.json')))
 var facGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/fac.json')))
 var fac2Graph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/fac2.json')))
 
@@ -94,5 +95,8 @@ describe('Dynamic type network graph', function () {
     expect(genGraph.node('up').inputPorts['data']).to.equal('[int64]')
     expect(genGraph.node('strToArr').outputPorts['output']).to.equal('[int64]')
     expect(genGraph.node('arrToStr').inputPorts['input']).to.equal('[int64]')
+  })
+  it('Throws an error if there is a type mismatch', () => {
+    expect(() => dtypenet.replaceGenerics(type_error)).to.throw(Error)
   })
 })

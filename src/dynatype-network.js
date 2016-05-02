@@ -66,6 +66,14 @@ function genericOutputs (graph, node) {
   return genericOutputs
 }
 
+function followGenerics (graph, node, outPort) {
+  if (graph.node(node)['outputPorts'][outPort] !== 'generic') {
+    return []
+  } else {
+    return genericInputs(graph, node)
+  }
+}
+
 function replaceTypeHints (graph) {
   var editGraph = graphtools.utils.edit(graph)
   _.merge(editGraph, {nodes: _.map(editGraph.nodes, (n) => {
@@ -82,30 +90,51 @@ export function replaceGenerics (graph) {
   var processGraph = replaceTypeHints(graph)
   var nodes = processGraph.nodes()
   for (var j = 0; j < nodes.length; j++) {
-    console.log('node', nodes[j])
-    var paths = graphtools.walkPort.walkBack(processGraph, nodes[j], genericInputs)
-    console.log(paths)
+    var genericPorts = genericInputs(processGraph, nodes[j])
+    var paths = []
+    for (let i = 0; i < genericPorts.length; i++) {
+      var predecessor = graphtools.walkPort.predecessor(processGraph, nodes[j], genericPorts[i])[0]
+      var outPort = graphtools.walkPort.predecessorPort(processGraph, nodes[j], genericPorts[i])[0]
+      var walk = _.map(graphtools.walkPort.walkBack(processGraph, predecessor, followGenerics, outPort), (e) => e.concat([nodes[j]]))
+      paths = paths.concat(walk)
+    }
+    var types = ''
+    var path = []
     for (var i = 0; i < paths.length; i++) {
-      var path = paths[i]
-      if (path.length >= 2) {
-        console.log('PFAD:', path)
-        var genericInput = genericInputs(processGraph, path[1])
-        console.log(genericInput)
-        var outputs = graphtools['walkPort'].predecessorPort(processGraph, path[1], genericInput[0])
-        console.log(outputs)
-        var type = processGraph.node(path[0])['outputPorts'][outputs[0]]
-        console.log(type)
-        for (var k = 1; k < path.length; k++) {
-          genericInput = genericInputs(processGraph, path[k])
-          for (var l = 0; l < genericInput.length; l++) {
-            processGraph.node(path[k])['inputPorts'][genericInput[l]] =
-              replaceAll(processGraph.node(path[k])['inputPorts'][genericInput[l]], 'generic', type)
-          }
-          var genericOutput = genericOutputs(processGraph, path[k])
-          for (var m = 0; m < genericOutput.length; m++) {
-            processGraph.node(path[k])['outputPorts'][genericOutput[m]] =
-              replaceAll(processGraph.node(path[k])['outputPorts'][genericOutput[m]], 'generic', type)
-          }
+      var currentPath = paths[i]
+      if (currentPath.length >= 2) {
+        path = currentPath
+        var genericInput = genericInputs(processGraph, currentPath[1])
+        var outputs = graphtools['walkPort'].predecessorPort(processGraph, currentPath[1], genericInput[0])
+        var type = processGraph.node(currentPath[0])['outputPorts'][outputs[0]]
+        // TODO currentPath[0] ist nicht umbedingt vorgänger von genericInput[0]
+        if (type === undefined) {
+          console.log('path', currentPath)
+          console.log('node', nodes[j])
+          console.log('genericInput', genericInput)
+          console.log('prevNode', currentPath[0])
+          console.log('outputs', outputs)
+          console.log('type', type)
+        }
+        if (types === '') {
+          types = type
+        } else if (type !== types) {
+          var error = 'Type mismatch: Two pathes ending in node ' + currentPath[currentPath.length - 1] + ' have different types: ' + types + ' and ' + type
+          throw new Error(error)
+        }
+      }
+    }
+    if (path !== []) {
+      for (var k = 1; k < path.length; k++) {
+        genericInput = genericInputs(processGraph, path[k])
+        for (var l = 0; l < genericInput.length; l++) {
+          processGraph.node(path[k])['inputPorts'][genericInput[l]] =
+            replaceAll(processGraph.node(path[k])['inputPorts'][genericInput[l]], 'generic', type)
+        }
+        var genericOutput = genericOutputs(processGraph, path[k])
+        for (var m = 0; m < genericOutput.length; m++) {
+          processGraph.node(path[k])['outputPorts'][genericOutput[m]] =
+            replaceAll(processGraph.node(path[k])['outputPorts'][genericOutput[m]], 'generic', type)
         }
       }
     }
