@@ -1,0 +1,499 @@
+{
+  "options": {
+    "directed": true,
+    "multigraph": false,
+    "compound": true
+  },
+  "nodes": [
+    {
+      "v": "in",
+      "value": {
+        "id": "io/stdin",
+        "version": "0.2.0",
+        "inputPorts": {},
+        "outputPorts": {
+          "output": "string"
+        },
+        "atomic": true,
+        "path": [],
+        "branchPath": "in",
+        "branch": "in",
+        "name": "in",
+        "typeHint": {},
+        "nodeType": "process"
+      }
+    },
+    {
+      "v": "strToArr",
+      "value": {
+        "id": "translator/string_to_array",
+        "version": "0.1.0",
+        "inputPorts": {
+          "input": "string"
+        },
+        "outputPorts": {
+          "output": "[generic]"
+        },
+        "atomic": true,
+        "path": [],
+        "typeHint": {
+          "output": "[int64]"
+        },
+        "branchPath": "strToArr",
+        "branch": "strToArr",
+        "name": "strToArr",
+        "nodeType": "process"
+      }
+    },
+    {
+      "v": "up",
+      "value": {
+        "id": "array/unpack",
+        "inputPorts": {
+          "data": "[generic]"
+        },
+        "outputPorts": {
+          "stream": "generic"
+        },
+        "atomic": true,
+        "version": "0.1.0",
+        "specialForm": true,
+        "path": [],
+        "branchPath": "up",
+        "branch": "up",
+        "name": "up",
+        "typeHint": {},
+        "nodeType": "process"
+      }
+    },
+    {
+      "v": "inc",
+      "value": {
+        "id": "math/inc",
+        "version": "0.4.1",
+        "inputPorts": {
+          "i": "int64"
+        },
+        "outputPorts": {
+          "inc": "int64"
+        },
+        "atomic": false,
+        "implementation": {
+          "nodes": [
+            {
+              "id": "math/add",
+              "version": "0.2.0",
+              "inputPorts": {
+                "s1": "number",
+                "s2": "number"
+              },
+              "outputPorts": {
+                "sum": "number"
+              },
+              "atomic": true,
+              "path": [
+                {
+                  "meta": "math/inc",
+                  "branch": "inc",
+                  "version": "0.4.1",
+                  "path": []
+                }
+              ],
+              "parent": "inc",
+              "branchPath": "inc:add",
+              "branch": "add"
+            },
+            {
+              "id": "math/const",
+              "version": "0.2.0",
+              "inputPorts": {},
+              "outputPorts": {
+                "output": "number"
+              },
+              "atomic": true,
+              "path": [
+                {
+                  "meta": "math/inc",
+                  "branch": "inc",
+                  "version": "0.4.1",
+                  "path": []
+                }
+              ],
+              "params": {
+                "value": 1
+              },
+              "parent": "inc",
+              "branchPath": "inc:c",
+              "branch": "c"
+            }
+          ],
+          "edges": [
+            {
+              "from": "i",
+              "to": "add:s1"
+            },
+            {
+              "from": "c:output",
+              "to": "add:s2"
+            },
+            {
+              "from": "add:sum",
+              "to": "inc"
+            }
+          ]
+        },
+        "path": [],
+        "branchPath": "inc",
+        "branch": "inc",
+        "name": "inc",
+        "typeHint": {},
+        "nodeType": "process"
+      }
+    },
+    {
+      "v": "inc:add",
+      "value": {
+        "id": "math/add",
+        "version": "0.2.0",
+        "inputPorts": {
+          "s1": "int64",
+          "s2": "int64"
+        },
+        "outputPorts": {
+          "sum": "int64"
+        },
+        "atomic": true,
+        "path": [
+          {
+            "meta": "math/inc",
+            "branch": "inc",
+            "version": "0.4.1",
+            "path": []
+          }
+        ],
+        "typeHint": {},
+        "parent": "inc",
+        "branchPath": "inc:add",
+        "branch": "add",
+        "nodeType": "process"
+      },
+      "parent": "inc"
+    },
+    {
+      "v": "inc:c",
+      "value": {
+        "id": "math/const",
+        "version": "0.2.0",
+        "inputPorts": {},
+        "outputPorts": {
+          "output": "int64"
+        },
+        "atomic": true,
+        "path": [
+          {
+            "meta": "math/inc",
+            "branch": "inc",
+            "version": "0.4.1",
+            "path": []
+          }
+        ],
+        "params": {
+          "value": 1
+        },
+        "typeHint": {},
+        "parent": "inc",
+        "branchPath": "inc:c",
+        "branch": "c",
+        "nodeType": "process"
+      },
+      "parent": "inc"
+    },
+    {
+      "v": "p",
+      "value": {
+        "id": "array/pack",
+        "inputPorts": {
+          "stream": "generic"
+        },
+        "outputPorts": {
+          "output": "[generic]"
+        },
+        "atomic": true,
+        "version": "0.1.1",
+        "specialForm": true,
+        "path": [],
+        "branchPath": "p",
+        "branch": "p",
+        "name": "p",
+        "typeHint": {},
+        "nodeType": "process"
+      }
+    },
+    {
+      "v": "arrToStr",
+      "value": {
+        "id": "translator/array_to_string",
+        "version": "0.1.0",
+        "inputPorts": {
+          "input": "[generic]"
+        },
+        "outputPorts": {
+          "output": "string"
+        },
+        "atomic": true,
+        "path": [],
+        "branchPath": "arrToStr",
+        "branch": "arrToStr",
+        "name": "arrToStr",
+        "typeHint": {},
+        "nodeType": "process"
+      }
+    },
+    {
+      "v": "out",
+      "value": {
+        "id": "io/stdout",
+        "version": "0.2.0",
+        "inputPorts": {
+          "input": "string"
+        },
+        "outputPorts": {},
+        "atomic": true,
+        "path": [],
+        "branchPath": "out",
+        "branch": "out",
+        "name": "out",
+        "typeHint": {},
+        "nodeType": "process"
+      }
+    },
+    {
+      "v": "strToArr_PORT_input",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "input",
+        "process": "strToArr"
+      }
+    },
+    {
+      "v": "in_PORT_output",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "output",
+        "process": "in"
+      }
+    },
+    {
+      "v": "up_PORT_data",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "data",
+        "process": "up"
+      }
+    },
+    {
+      "v": "strToArr_PORT_output",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "output",
+        "process": "strToArr"
+      }
+    },
+    {
+      "v": "inc_PORT_i",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "i",
+        "hierarchyBorder": true,
+        "process": "inc"
+      }
+    },
+    {
+      "v": "up_PORT_stream",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "stream",
+        "process": "up"
+      }
+    },
+    {
+      "v": "p_PORT_stream",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "stream",
+        "process": "p"
+      }
+    },
+    {
+      "v": "inc_PORT_inc",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "inc",
+        "hierarchyBorder": true,
+        "process": "inc"
+      }
+    },
+    {
+      "v": "arrToStr_PORT_input",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "input",
+        "process": "arrToStr"
+      }
+    },
+    {
+      "v": "p_PORT_output",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "output",
+        "process": "p"
+      }
+    },
+    {
+      "v": "out_PORT_input",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "input",
+        "process": "out"
+      }
+    },
+    {
+      "v": "arrToStr_PORT_output",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "output",
+        "process": "arrToStr"
+      }
+    },
+    {
+      "v": "inc:add_PORT_s1",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "s1",
+        "process": "inc:add"
+      },
+      "parent": "inc"
+    },
+    {
+      "v": "inc:add_PORT_s2",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "s2",
+        "process": "inc:add"
+      },
+      "parent": "inc"
+    },
+    {
+      "v": "inc:c_PORT_output",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "output",
+        "process": "inc:c"
+      },
+      "parent": "inc"
+    },
+    {
+      "v": "inc:add_PORT_sum",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "sum",
+        "process": "inc:add"
+      },
+      "parent": "inc"
+    }
+  ],
+  "edges": [
+    {
+      "v": "strToArr_PORT_input",
+      "w": "strToArr"
+    },
+    {
+      "v": "in",
+      "w": "in_PORT_output"
+    },
+    {
+      "v": "in_PORT_output",
+      "w": "strToArr_PORT_input"
+    },
+    {
+      "v": "up_PORT_data",
+      "w": "up"
+    },
+    {
+      "v": "strToArr",
+      "w": "strToArr_PORT_output"
+    },
+    {
+      "v": "strToArr_PORT_output",
+      "w": "up_PORT_data"
+    },
+    {
+      "v": "up",
+      "w": "up_PORT_stream"
+    },
+    {
+      "v": "up_PORT_stream",
+      "w": "inc_PORT_i"
+    },
+    {
+      "v": "p_PORT_stream",
+      "w": "p"
+    },
+    {
+      "v": "inc_PORT_inc",
+      "w": "p_PORT_stream"
+    },
+    {
+      "v": "arrToStr_PORT_input",
+      "w": "arrToStr"
+    },
+    {
+      "v": "p",
+      "w": "p_PORT_output"
+    },
+    {
+      "v": "p_PORT_output",
+      "w": "arrToStr_PORT_input"
+    },
+    {
+      "v": "out_PORT_input",
+      "w": "out"
+    },
+    {
+      "v": "arrToStr",
+      "w": "arrToStr_PORT_output"
+    },
+    {
+      "v": "arrToStr_PORT_output",
+      "w": "out_PORT_input"
+    },
+    {
+      "v": "inc:add_PORT_s1",
+      "w": "inc:add"
+    },
+    {
+      "v": "inc_PORT_i",
+      "w": "inc:add_PORT_s1"
+    },
+    {
+      "v": "inc:add_PORT_s2",
+      "w": "inc:add"
+    },
+    {
+      "v": "inc:c",
+      "w": "inc:c_PORT_output"
+    },
+    {
+      "v": "inc:c_PORT_output",
+      "w": "inc:add_PORT_s2"
+    },
+    {
+      "v": "inc:add",
+      "w": "inc:add_PORT_sum"
+    },
+    {
+      "v": "inc:add_PORT_sum",
+      "w": "inc_PORT_inc"
+    }
+  ]
+}

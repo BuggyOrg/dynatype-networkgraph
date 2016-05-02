@@ -1,0 +1,30 @@
+{
+  "options": {
+    "directed": true,
+    "multigraph": false,
+    "compound": true
+  },
+  "nodes": [
+    {
+      "v": "in",
+      "value": {
+        "id": "io/stdin",
+        "version": "0.2.0",
+        "inputPorts": {},
+        "outputPorts": {
+          "output": "generic"
+        },
+        "atomic": true,
+        "path": [],
+        "branchPath": "in",
+        "branch": "in",
+        "name": "in",
+        "nodeType": "process",
+        "typeHint": {
+          "output": "string"
+        }
+      }
+    }
+  ],
+  "edges": []
+}

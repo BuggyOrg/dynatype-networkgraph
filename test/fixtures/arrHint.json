@@ -1,0 +1,76 @@
+{
+  "options": {
+    "directed": true,
+    "multigraph": false,
+    "compound": true
+  },
+  "nodes": [
+    {
+      "v": "in",
+      "value": {
+        "id": "io/arrIn",
+        "version": "0.2.0",
+        "inputPorts": {},
+        "outputPorts": {
+          "output": "[generic]"
+        },
+        "atomic": true,
+        "path": [],
+        "branchPath": "in",
+        "branch": "in",
+        "name": "in",
+        "nodeType": "process",
+        "typeHint": {
+          "output": "[string]"
+        }
+      }
+    },
+    {
+      "v": "out",
+      "value": {
+        "id": "io/arrOut",
+        "version": "0.2.0",
+        "inputPorts": {
+          "input": "[generic]"
+        },
+        "outputPorts": {},
+        "atomic": true,
+        "path": [],
+        "branchPath": "out",
+        "branch": "out",
+        "name": "out",
+        "nodeType": "process"
+      }
+    },
+    {
+      "v": "out_PORT_input",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "input",
+        "process": "out"
+      }
+    },
+    {
+      "v": "in_PORT_output",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "output",
+        "process": "in"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "v": "out_PORT_input",
+      "w": "out"
+    },
+    {
+      "v": "in",
+      "w": "in_PORT_output"
+    },
+    {
+      "v": "in_PORT_output",
+      "w": "out_PORT_input"
+    }
+  ]
+}

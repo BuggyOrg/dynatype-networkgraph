@@ -1,5 +1,6 @@
 var grlib = require('graphlib')
 // var graphtools = require('@buggyorg/graphtools')
+import _ from 'lodash'
 import * as graphtools from '@buggyorg/graphtools'
 
 function isInPort (node) {
@@ -31,13 +32,19 @@ function getInputs (graph, nodeId) {
   return graph.node(nodeId)['inputPorts']
 }
 
+var replaceAll = (str, search, replacement) => {
+  // improve replacement!!
+  var repl = replacement.replace(/\[/g, '').replace(/\]/g, '')
+  return str.split(search).join(repl)
+}
+
 function genericInputs (graph, node) {
   var genericInputs = []
   if (graph.node(node)['inputPorts'] !== undefined) {
     var inputPorts = graph.node(node)['inputPorts']
     var inputNames = Object.keys(inputPorts)
     for (var i = 0; i < inputNames.length; i++) {
-      if (inputPorts[inputNames[i]] === 'generic') {
+      if (inputPorts[inputNames[i]] === 'generic' || inputPorts[inputNames[i]] === '[generic]') {
         genericInputs = genericInputs.concat([inputNames[i]])
       }
     }
@@ -51,7 +58,7 @@ function genericOutputs (graph, node) {
     var outputPorts = graph.node(node)['outputPorts']
     var outputNames = Object.keys(outputPorts)
     for (var i = 0; i < outputNames.length; i++) {
-      if (outputPorts[outputNames[i]] === 'generic') {
+      if (outputPorts[outputNames[i]] === 'generic' || outputPorts[outputNames[i]] === '[generic]') {
         genericOutputs = genericOutputs.concat([outputNames[i]])
       }
     }
@@ -59,7 +66,20 @@ function genericOutputs (graph, node) {
   return genericOutputs
 }
 
-export function replaceGenerics (processGraph) {
+function replaceTypeHints (graph) {
+  var editGraph = graphtools.utils.edit(graph)
+  _.merge(editGraph, {nodes: _.map(editGraph.nodes, (n) => {
+    if (!n.value.id) { return n }
+    return _.merge({}, n, { value: {
+      inputPorts: _.mapValues(n.value.inputPorts, (p, k) => (n.value.typeHint && n.value.typeHint[k]) ? n.value.typeHint[k] : p),
+      outputPorts: _.mapValues(n.value.outputPorts, (p, k) => (n.value.typeHint && n.value.typeHint[k]) ? n.value.typeHint[k] : p)
+    }})
+  })})
+  return graphtools.utils.finalize(editGraph)
+}
+
+export function replaceGenerics (graph) {
+  var processGraph = replaceTypeHints(graph)
   var nodes = processGraph.nodes()
   for (var j = 0; j < nodes.length; j++) {
     console.log('node', nodes[j])
@@ -78,11 +98,13 @@ export function replaceGenerics (processGraph) {
         for (var k = 1; k < path.length; k++) {
           genericInput = genericInputs(processGraph, path[k])
           for (var l = 0; l < genericInput.length; l++) {
-            processGraph.node(path[k])['inputPorts'][genericInput[l]] = type
+            processGraph.node(path[k])['inputPorts'][genericInput[l]] =
+              replaceAll(processGraph.node(path[k])['inputPorts'][genericInput[l]], 'generic', type)
           }
           var genericOutput = genericOutputs(processGraph, path[k])
           for (var m = 0; m < genericOutput.length; m++) {
-            processGraph.node(path[k])['outputPorts'][genericOutput[m]] = type
+            processGraph.node(path[k])['outputPorts'][genericOutput[m]] =
+              replaceAll(processGraph.node(path[k])['outputPorts'][genericOutput[m]], 'generic', type)
           }
         }
       }
