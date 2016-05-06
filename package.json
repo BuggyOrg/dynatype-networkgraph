@@ -26,7 +26,9 @@
     "standard": "^6.0.8"
   },
   "scripts": {
-    "test": "node node_modules/standard/bin/cmd.js src/**/*.js && babel src -d lib && node_modules/mocha/bin/mocha --compilers js:babel-register"
+    "test": "node node_modules/standard/bin/cmd.js src/**/*.js && node_modules/mocha/bin/mocha --compilers js:babel-register",
+    "build": "babel src -d lib",
+    "prepublish": "babel src -d lib"
   },
   "author": "",
   "license": "MIT"

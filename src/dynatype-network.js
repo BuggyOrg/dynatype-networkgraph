@@ -38,13 +38,24 @@ var replaceAll = (str, search, replacement) => {
   return str.split(search).join(repl)
 }
 
+function isGeneric (name) {
+  return name === 'generic' || name === '[generic]' || name === 'function'
+}
+
+function replaceGeneric (what, replacement) {
+  if (what === 'function') {
+    return replacement
+  } else {
+    return replaceAll(what, 'generic', replacement)
+  }
+}
 function genericInputs (graph, node) {
   var genericInputs = []
   if (graph.node(node)['inputPorts'] !== undefined) {
     var inputPorts = graph.node(node)['inputPorts']
     var inputNames = Object.keys(inputPorts)
     for (var i = 0; i < inputNames.length; i++) {
-      if (inputPorts[inputNames[i]] === 'generic' || inputPorts[inputNames[i]] === '[generic]') {
+      if (isGeneric(inputPorts[inputNames[i]])) {
         genericInputs = genericInputs.concat([inputNames[i]])
       }
     }
@@ -58,7 +69,7 @@ function genericOutputs (graph, node) {
     var outputPorts = graph.node(node)['outputPorts']
     var outputNames = Object.keys(outputPorts)
     for (var i = 0; i < outputNames.length; i++) {
-      if (outputPorts[outputNames[i]] === 'generic' || outputPorts[outputNames[i]] === '[generic]') {
+      if (isGeneric(outputPorts[outputNames[i]])) {
         genericOutputs = genericOutputs.concat([outputNames[i]])
       }
     }
@@ -66,11 +77,20 @@ function genericOutputs (graph, node) {
   return genericOutputs
 }
 
-function followGenerics (graph, node, outPort) {
-  if (graph.node(node)['outputPorts'][outPort] !== 'generic') {
+function genericPorts (graph, node, port) {
+  var curNode = graph.node(node)
+  if (curNode.atomic || curNode.inputPorts[port]) {
+    return genericInputs(graph, node)
+  } else {
+    return genericOutputs(graph, node)
+  }
+}
+
+function followGenerics (graph, node, port) {
+  if (port && !isGeneric(graph.node(node)['outputPorts'][port])) {
     return []
   } else {
-    return genericInputs(graph, node)
+    return genericPorts(graph, node, port)
   }
 }
 
@@ -86,27 +106,41 @@ function replaceTypeHints (graph) {
   return graphtools.utils.finalize(editGraph)
 }
 
+/**
+ * replaces a generic input port by walking the path back until a non generic is found
+ *
+ * @param graph the graphlib graph
+ * @param node the node from which the generic port should be replaced
+ * @param node the port of the input node to follow
+ */
+export function replaceGenericInput (graph, node) {
+  var curNode = graph.node(node)
+  if (curNode.atomic) {
+    return graphtools.walk.walkBack(graph, node, followGenerics, {keepPorts: true})
+  } else {
+    var ports = _.merge({}, curNode.inputPorts, curNode.outputPorts)
+    return _.map(ports, (port) =>
+      graphtools.walk.walkBack(graph, {node, port}, followGenerics, {keepPorts: true}))
+  }
+}
+
 export function replaceGenerics (graph) {
   var processGraph = replaceTypeHints(graph)
   var nodes = processGraph.nodes()
   for (var j = 0; j < nodes.length; j++) {
-    var genericPorts = genericInputs(processGraph, nodes[j])
-    var paths = []
-    for (let i = 0; i < genericPorts.length; i++) {
-      var predecessor = graphtools.walkPort.predecessor(processGraph, nodes[j], genericPorts[i])[0]
-      var outPort = graphtools.walkPort.predecessorPort(processGraph, nodes[j], genericPorts[i])[0]
-      var walk = _.map(graphtools.walkPort.walkBack(processGraph, predecessor, followGenerics, outPort), (e) => e.concat([nodes[j]]))
-      paths = paths.concat(walk)
-    }
+    var paths = replaceGenericInput(graph, nodes[j])
     var types = ''
     var path = []
     for (var i = 0; i < paths.length; i++) {
       var currentPath = paths[i]
       if (currentPath.length >= 2) {
         path = currentPath
-        var genericInput = genericInputs(processGraph, currentPath[1])
-        var outputs = graphtools['walkPort'].predecessorPort(processGraph, currentPath[1], genericInput[0])
-        var type = processGraph.node(currentPath[0])['outputPorts'][outputs[0]]
+        console.log('curP', currentPath)
+        var genericInput = genericInputs(processGraph, currentPath[1].node)
+        console.log('genInput', genericInput)
+        console.log('cur', currentPath[1])
+        var outputs = graphtools.walk.predecessor(processGraph, currentPath[1].node, genericInput[0])
+        var type = processGraph.node(currentPath[0].node)['outputPorts'][outputs.node]
         // TODO currentPath[0] ist nicht umbedingt vorgänger von genericInput[0]
         if (type === undefined) {
           console.log('path', currentPath)
@@ -129,12 +163,12 @@ export function replaceGenerics (graph) {
         genericInput = genericInputs(processGraph, path[k])
         for (var l = 0; l < genericInput.length; l++) {
           processGraph.node(path[k])['inputPorts'][genericInput[l]] =
-            replaceAll(processGraph.node(path[k])['inputPorts'][genericInput[l]], 'generic', type)
+            replaceGeneric(processGraph.node(path[k])['inputPorts'][genericInput[l]], type)
         }
         var genericOutput = genericOutputs(processGraph, path[k])
         for (var m = 0; m < genericOutput.length; m++) {
           processGraph.node(path[k])['outputPorts'][genericOutput[m]] =
-            replaceAll(processGraph.node(path[k])['outputPorts'][genericOutput[m]], 'generic', type)
+            replaceGeneric(processGraph.node(path[k])['outputPorts'][genericOutput[m]], type)
         }
       }
     }

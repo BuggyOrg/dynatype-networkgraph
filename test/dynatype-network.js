@@ -99,4 +99,18 @@ describe('Dynamic type network graph', function () {
   it('Throws an error if there is a type mismatch', () => {
     expect(() => dtypenet.replaceGenerics(type_error)).to.throw(Error)
   })
+
+  it.only('Can process the map example correctly', () => {
+    var mapGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/map.json')))
+    var genGraph = dtypenet.replaceGenerics(mapGraph)
+    console.log(JSON.stringify(grlib.json.write(genGraph), null, 2))
+    expect(genGraph.node('mapInc').inputPorts['data']).to.equal('[int64]')
+    expect(genGraph.node('mapInc').inputPorts['fn']).to.be.a('object')
+  })
+
+  it('finds a way through map', () => {
+    var mapGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/map.json')))
+    var path = dtypenet.replaceGenericInput(mapGraph, 'arrToStr')
+    expect(path).to.have.length(1)
+  })
 })
