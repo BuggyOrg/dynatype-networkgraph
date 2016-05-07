@@ -104,6 +104,8 @@ describe('Dynamic type network graph', function () {
     var genGraph = dtypenet.replaceGenerics(mapGraph)
     // console.log(JSON.stringify(grlib.json.write(genGraph), null, 2))
     expect(genGraph.node('mapInc').inputPorts['data']).to.equal('[int64]')
+    expect(genGraph.node('mapInc:apply').inputPorts['value']).to.equal('int64')
+    expect(genGraph.node('mapInc:apply').outputPorts['result']).to.equal('int64')
     expect(genGraph.node('mapInc').inputPorts['fn']).to.be.an('object')
   })
 
@@ -116,6 +118,6 @@ describe('Dynamic type network graph', function () {
   it('can backtrack compound inputs', () => {
     var mapGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/map.json')))
     var path = dtypenet.replaceGenericInput(mapGraph, 'mapInc')
-    expect(path).to.have.length(3)
+    expect(path).to.have.length(2)
   })
 })

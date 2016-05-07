@@ -225,9 +225,14 @@
       "v": "mapInc",
       "value": {
         "id": "functional/map",
-        "version": "0.1.4",
+        "version": "0.1.5",
         "inputPorts": {
-          "fn": "function",
+          "fn": {
+            "arguments": {
+              "i": "int64"
+            },
+            "return": "int64"
+          },
           "data": "[generic]"
         },
         "outputPorts": {
@@ -238,6 +243,59 @@
         },
         "implementation": {
           "nodes": [
+            {
+              "id": "array/unpack",
+              "inputPorts": {
+                "data": "[generic]"
+              },
+              "outputPorts": {
+                "stream": "generic"
+              },
+              "atomic": true,
+              "version": "0.1.2",
+              "settings": {
+                "unpack": true
+              },
+              "path": [
+                {
+                  "meta": "functional/map",
+                  "branch": "mapInc",
+                  "version": "0.1.5",
+                  "path": []
+                }
+              ],
+              "parent": "mapInc",
+              "branchPath": "mapInc:up",
+              "branch": "up",
+              "recursive": false
+            },
+            {
+              "id": "array/unpack-value",
+              "inputPorts": {
+                "data": "[generic]",
+                "value": "generic"
+              },
+              "outputPorts": {
+                "stream": "generic"
+              },
+              "atomic": true,
+              "version": "0.1.0",
+              "settings": {
+                "unpack": true
+              },
+              "path": [
+                {
+                  "meta": "functional/map",
+                  "branch": "mapInc",
+                  "version": "0.1.5",
+                  "path": []
+                }
+              ],
+              "parent": "mapInc",
+              "branchPath": "mapInc:upv",
+              "branch": "upv",
+              "recursive": false
+            },
             {
               "id": "functional/apply",
               "version": "0.1.2",
@@ -254,7 +312,7 @@
                 {
                   "meta": "functional/map",
                   "branch": "mapInc",
-                  "version": "0.1.4",
+                  "version": "0.1.5",
                   "path": []
                 }
               ],
@@ -262,19 +320,62 @@
               "branchPath": "mapInc:apply",
               "branch": "apply",
               "recursive": false
+            },
+            {
+              "id": "array/pack",
+              "inputPorts": {
+                "stream": "generic"
+              },
+              "outputPorts": {
+                "output": "[generic]"
+              },
+              "atomic": true,
+              "version": "0.1.2",
+              "specialForm": true,
+              "settings": {
+                "pack": true
+              },
+              "path": [
+                {
+                  "meta": "functional/map",
+                  "branch": "mapInc",
+                  "version": "0.1.5",
+                  "path": []
+                }
+              ],
+              "parent": "mapInc",
+              "branchPath": "mapInc:p",
+              "branch": "p",
+              "recursive": false
             }
           ],
           "edges": [
             {
               "from": "data",
-              "to": "apply:data"
+              "to": "up:data"
+            },
+            {
+              "from": "data",
+              "to": "upv:data"
             },
             {
               "from": "fn",
+              "to": "upv:value"
+            },
+            {
+              "from": "up:stream",
+              "to": "apply:value"
+            },
+            {
+              "from": "upv:stream",
               "to": "apply:fn"
             },
             {
               "from": "apply:result",
+              "to": "p:stream"
+            },
+            {
+              "from": "p:output",
               "to": "result"
             }
           ]
@@ -287,6 +388,81 @@
         "typeHint": {},
         "nodeType": "process"
       }
+    },
+    {
+      "v": "mapInc:up",
+      "value": {
+        "id": "array/unpack",
+        "inputPorts": {
+          "data": "[generic]"
+        },
+        "outputPorts": {
+          "stream": "generic"
+        },
+        "atomic": true,
+        "version": "0.1.2",
+        "settings": {
+          "unpack": true
+        },
+        "path": [
+          {
+            "meta": "functional/map",
+            "branch": "mapInc",
+            "version": "0.1.5",
+            "path": []
+          }
+        ],
+        "typeHint": {},
+        "parent": "mapInc",
+        "branchPath": "mapInc:up",
+        "branch": "up",
+        "recursive": false,
+        "nodeType": "process"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:upv",
+      "value": {
+        "id": "array/unpack-value",
+        "inputPorts": {
+          "data": "[generic]",
+          "value": {
+            "arguments": {
+              "i": "int64"
+            },
+            "return": "int64"
+          }
+        },
+        "outputPorts": {
+          "stream": {
+            "arguments": {
+              "i": "int64"
+            },
+            "return": "int64"
+          }
+        },
+        "atomic": true,
+        "version": "0.1.0",
+        "settings": {
+          "unpack": true
+        },
+        "path": [
+          {
+            "meta": "functional/map",
+            "branch": "mapInc",
+            "version": "0.1.5",
+            "path": []
+          }
+        ],
+        "typeHint": {},
+        "parent": "mapInc",
+        "branchPath": "mapInc:upv",
+        "branch": "upv",
+        "recursive": false,
+        "nodeType": "process"
+      },
+      "parent": "mapInc"
     },
     {
       "v": "mapInc:apply",
@@ -311,7 +487,7 @@
           {
             "meta": "functional/map",
             "branch": "mapInc",
-            "version": "0.1.4",
+            "version": "0.1.5",
             "path": []
           }
         ],
@@ -319,6 +495,39 @@
         "parent": "mapInc",
         "branchPath": "mapInc:apply",
         "branch": "apply",
+        "recursive": false,
+        "nodeType": "process"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:p",
+      "value": {
+        "id": "array/pack",
+        "inputPorts": {
+          "stream": "generic"
+        },
+        "outputPorts": {
+          "output": "[generic]"
+        },
+        "atomic": true,
+        "version": "0.1.2",
+        "specialForm": true,
+        "settings": {
+          "pack": true
+        },
+        "path": [
+          {
+            "meta": "functional/map",
+            "branch": "mapInc",
+            "version": "0.1.5",
+            "path": []
+          }
+        ],
+        "typeHint": {},
+        "parent": "mapInc",
+        "branchPath": "mapInc:p",
+        "branch": "p",
         "recursive": false,
         "nodeType": "process"
       },
@@ -363,6 +572,24 @@
         "typeHint": {},
         "nodeType": "process"
       }
+    },
+    {
+      "v": "mapInc_DUPLICATE_0_1",
+      "value": {
+        "id": "control/duplicate",
+        "version": "0.2.0",
+        "inputPorts": {
+          "in": "generic"
+        },
+        "outputPorts": {
+          "d1": "generic",
+          "d2": "generic"
+        },
+        "atomic": true,
+        "typeHint": {},
+        "nodeType": "process"
+      },
+      "parent": "mapInc"
     },
     {
       "v": "strToArr_PORT_input",
@@ -502,11 +729,29 @@
       "parent": "inc_lambda"
     },
     {
-      "v": "mapInc:apply_PORT_data",
+      "v": "mapInc:upv_PORT_value",
       "value": {
         "nodeType": "inPort",
-        "portName": "data",
+        "portName": "value",
+        "process": "mapInc:upv"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:apply_PORT_value",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "value",
         "process": "mapInc:apply"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:up_PORT_stream",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "stream",
+        "process": "mapInc:up"
       },
       "parent": "mapInc"
     },
@@ -520,11 +765,83 @@
       "parent": "mapInc"
     },
     {
+      "v": "mapInc:upv_PORT_stream",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "stream",
+        "process": "mapInc:upv"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:p_PORT_stream",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "stream",
+        "process": "mapInc:p"
+      },
+      "parent": "mapInc"
+    },
+    {
       "v": "mapInc:apply_PORT_result",
       "value": {
         "nodeType": "outPort",
         "portName": "result",
         "process": "mapInc:apply"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:p_PORT_output",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "output",
+        "process": "mapInc:p"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:up_PORT_data",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "data",
+        "process": "mapInc:up"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc_DUPLICATE_0_1_PORT_d1",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "d1",
+        "process": "mapInc_DUPLICATE_0_1"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:upv_PORT_data",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "data",
+        "process": "mapInc:upv"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc_DUPLICATE_0_1_PORT_d2",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "d2",
+        "process": "mapInc_DUPLICATE_0_1"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc_DUPLICATE_0_1_PORT_in",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "in",
+        "process": "mapInc_DUPLICATE_0_1"
       },
       "parent": "mapInc"
     }
@@ -607,20 +924,40 @@
       "w": "inc_lambda_PORT_inc"
     },
     {
-      "v": "mapInc:apply_PORT_data",
+      "v": "mapInc:upv_PORT_value",
+      "w": "mapInc:upv"
+    },
+    {
+      "v": "mapInc_PORT_fn",
+      "w": "mapInc:upv_PORT_value"
+    },
+    {
+      "v": "mapInc:apply_PORT_value",
       "w": "mapInc:apply"
     },
     {
-      "v": "mapInc_PORT_data",
-      "w": "mapInc:apply_PORT_data"
+      "v": "mapInc:up",
+      "w": "mapInc:up_PORT_stream"
+    },
+    {
+      "v": "mapInc:up_PORT_stream",
+      "w": "mapInc:apply_PORT_value"
     },
     {
       "v": "mapInc:apply_PORT_fn",
       "w": "mapInc:apply"
     },
     {
-      "v": "mapInc_PORT_fn",
+      "v": "mapInc:upv",
+      "w": "mapInc:upv_PORT_stream"
+    },
+    {
+      "v": "mapInc:upv_PORT_stream",
       "w": "mapInc:apply_PORT_fn"
+    },
+    {
+      "v": "mapInc:p_PORT_stream",
+      "w": "mapInc:p"
     },
     {
       "v": "mapInc:apply",
@@ -628,7 +965,47 @@
     },
     {
       "v": "mapInc:apply_PORT_result",
+      "w": "mapInc:p_PORT_stream"
+    },
+    {
+      "v": "mapInc:p",
+      "w": "mapInc:p_PORT_output"
+    },
+    {
+      "v": "mapInc:p_PORT_output",
       "w": "mapInc_PORT_result"
+    },
+    {
+      "v": "mapInc:up_PORT_data",
+      "w": "mapInc:up"
+    },
+    {
+      "v": "mapInc_DUPLICATE_0_1",
+      "w": "mapInc_DUPLICATE_0_1_PORT_d1"
+    },
+    {
+      "v": "mapInc_DUPLICATE_0_1_PORT_d1",
+      "w": "mapInc:up_PORT_data"
+    },
+    {
+      "v": "mapInc:upv_PORT_data",
+      "w": "mapInc:upv"
+    },
+    {
+      "v": "mapInc_DUPLICATE_0_1",
+      "w": "mapInc_DUPLICATE_0_1_PORT_d2"
+    },
+    {
+      "v": "mapInc_DUPLICATE_0_1_PORT_d2",
+      "w": "mapInc:upv_PORT_data"
+    },
+    {
+      "v": "mapInc_DUPLICATE_0_1_PORT_in",
+      "w": "mapInc_DUPLICATE_0_1"
+    },
+    {
+      "v": "mapInc_PORT_data",
+      "w": "mapInc_DUPLICATE_0_1_PORT_in"
     }
   ]
 }
