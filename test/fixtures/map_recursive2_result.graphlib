@@ -1,0 +1,3472 @@
+{
+  "options": {
+    "directed": true,
+    "multigraph": false,
+    "compound": true
+  },
+  "nodes": [
+    {
+      "v": "in",
+      "value": {
+        "id": "io/stdin",
+        "version": "0.2.0",
+        "inputPorts": {},
+        "outputPorts": {
+          "output": "string"
+        },
+        "atomic": true,
+        "path": [],
+        "branchPath": "in",
+        "branch": "in",
+        "name": "in",
+        "recursive": false,
+        "typeHint": {},
+        "nodeType": "process"
+      }
+    },
+    {
+      "v": "lambda_inc",
+      "value": {
+        "id": "functional/lambda",
+        "version": "0.1.0",
+        "inputPorts": {},
+        "outputPorts": {
+          "fn": {
+            "arguments": {
+              "i": "int64"
+            },
+            "return": "int64"
+          }
+        },
+        "atomic": true,
+        "path": [],
+        "params": {
+          "implementation": "math/inc"
+        },
+        "branchPath": "lambda_inc",
+        "branch": "lambda_inc",
+        "name": "lambda_inc",
+        "recursive": false,
+        "typeHint": {},
+        "nodeType": "process"
+      }
+    },
+    {
+      "v": "inc_lambda",
+      "value": {
+        "id": "math/inc",
+        "version": "0.4.1",
+        "inputPorts": {
+          "i": "int64"
+        },
+        "outputPorts": {
+          "inc": "int64"
+        },
+        "atomic": false,
+        "implementation": {
+          "nodes": [
+            {
+              "id": "math/add",
+              "version": "0.2.0",
+              "inputPorts": {
+                "s1": "number",
+                "s2": "number"
+              },
+              "outputPorts": {
+                "sum": "number"
+              },
+              "atomic": true,
+              "path": [
+                {
+                  "meta": "math/inc",
+                  "branch": "inc_lambda",
+                  "version": "0.4.1",
+                  "path": []
+                }
+              ],
+              "parent": "inc_lambda",
+              "branchPath": "inc_lambda:add",
+              "branch": "add",
+              "recursive": false
+            },
+            {
+              "id": "math/const",
+              "version": "0.2.0",
+              "inputPorts": {},
+              "outputPorts": {
+                "output": "number"
+              },
+              "atomic": true,
+              "path": [
+                {
+                  "meta": "math/inc",
+                  "branch": "inc_lambda",
+                  "version": "0.4.1",
+                  "path": []
+                }
+              ],
+              "params": {
+                "value": 1
+              },
+              "parent": "inc_lambda",
+              "branchPath": "inc_lambda:c",
+              "branch": "c",
+              "recursive": false
+            }
+          ],
+          "edges": [
+            {
+              "from": "i",
+              "to": "add:s1"
+            },
+            {
+              "from": "c:output",
+              "to": "add:s2"
+            },
+            {
+              "from": "add:sum",
+              "to": "inc"
+            }
+          ]
+        },
+        "path": [],
+        "branchPath": "inc_lambda",
+        "branch": "inc_lambda",
+        "name": "inc_lambda",
+        "recursive": false,
+        "typeHint": {},
+        "nodeType": "process"
+      }
+    },
+    {
+      "v": "inc_lambda:add",
+      "value": {
+        "id": "math/add",
+        "version": "0.2.0",
+        "inputPorts": {
+          "s1": "int64",
+          "s2": "int64"
+        },
+        "outputPorts": {
+          "sum": "int64"
+        },
+        "atomic": true,
+        "path": [
+          {
+            "meta": "math/inc",
+            "branch": "inc_lambda",
+            "version": "0.4.1",
+            "path": []
+          }
+        ],
+        "parent": "inc_lambda",
+        "branchPath": "inc_lambda:add",
+        "branch": "add",
+        "recursive": false,
+        "typeHint": {},
+        "nodeType": "process"
+      },
+      "parent": "inc_lambda"
+    },
+    {
+      "v": "inc_lambda:c",
+      "value": {
+        "id": "math/const",
+        "version": "0.2.0",
+        "inputPorts": {},
+        "outputPorts": {
+          "output": "int64"
+        },
+        "atomic": true,
+        "path": [
+          {
+            "meta": "math/inc",
+            "branch": "inc_lambda",
+            "version": "0.4.1",
+            "path": []
+          }
+        ],
+        "params": {
+          "value": 1
+        },
+        "parent": "inc_lambda",
+        "branchPath": "inc_lambda:c",
+        "branch": "c",
+        "recursive": false,
+        "typeHint": {},
+        "nodeType": "process"
+      },
+      "parent": "inc_lambda"
+    },
+    {
+      "v": "strToArr",
+      "value": {
+        "id": "translator/string_to_array",
+        "version": "0.1.0",
+        "inputPorts": {
+          "input": "string"
+        },
+        "outputPorts": {
+          "output": "[int64]"
+        },
+        "atomic": true,
+        "path": [],
+        "typeHint": {},
+        "branchPath": "strToArr",
+        "branch": "strToArr",
+        "name": "strToArr",
+        "recursive": false,
+        "nodeType": "process"
+      }
+    },
+    {
+      "v": "mapInc",
+      "value": {
+        "id": "functional/map",
+        "version": "0.2.2",
+        "inputPorts": {
+          "fn": {
+            "arguments": {
+              "i": "int64"
+            },
+            "return": "int64"
+          },
+          "data": "[int64]"
+        },
+        "outputPorts": {
+          "result": "[int64]"
+        },
+        "implementation": {
+          "nodes": [
+            {
+              "id": "array/first",
+              "version": "0.1.0",
+              "inputPorts": {
+                "array": "[generic]"
+              },
+              "outputPorts": {
+                "value": "generic"
+              },
+              "atomic": true,
+              "path": [
+                {
+                  "meta": "functional/map",
+                  "branch": "mapInc",
+                  "version": "0.2.2",
+                  "path": []
+                }
+              ],
+              "parent": "mapInc",
+              "branchPath": "mapInc:first",
+              "branch": "first",
+              "recursive": false
+            },
+            {
+              "id": "functional/apply",
+              "version": "0.1.2",
+              "inputPorts": {
+                "fn": "function",
+                "value": "function:arg"
+              },
+              "outputPorts": {
+                "result": "function:return"
+              },
+              "atomic": true,
+              "specialForm": true,
+              "path": [
+                {
+                  "meta": "functional/map",
+                  "branch": "mapInc",
+                  "version": "0.2.2",
+                  "path": []
+                }
+              ],
+              "parent": "mapInc",
+              "branchPath": "mapInc:apply",
+              "branch": "apply",
+              "recursive": false
+            },
+            {
+              "id": "array/rest",
+              "version": "0.1.0",
+              "inputPorts": {
+                "array": "generic"
+              },
+              "outputPorts": {
+                "rest": "generic"
+              },
+              "atomic": true,
+              "path": [
+                {
+                  "meta": "functional/map",
+                  "branch": "mapInc",
+                  "version": "0.2.2",
+                  "path": []
+                }
+              ],
+              "parent": "mapInc",
+              "branchPath": "mapInc:rest",
+              "branch": "rest",
+              "recursive": false
+            },
+            {
+              "id": "array/empty",
+              "version": "0.1.0",
+              "inputPorts": {
+                "array": "generic"
+              },
+              "outputPorts": {
+                "isEmpty": "bool"
+              },
+              "atomic": true,
+              "path": [
+                {
+                  "meta": "functional/map",
+                  "branch": "mapInc",
+                  "version": "0.2.2",
+                  "path": []
+                }
+              ],
+              "parent": "mapInc",
+              "branchPath": "mapInc:empty",
+              "branch": "empty",
+              "recursive": false
+            },
+            {
+              "name": "DEMUX",
+              "id": "logic/demux",
+              "inputPorts": {
+                "input": "generic",
+                "control": "bool"
+              },
+              "outputPorts": {
+                "outTrue": "generic",
+                "outFalse": "generic"
+              },
+              "atomic": true,
+              "version": "0.2.0",
+              "specialForm": true,
+              "path": [
+                {
+                  "meta": "functional/map",
+                  "branch": "mapInc",
+                  "version": "0.2.2",
+                  "path": []
+                }
+              ],
+              "parent": "mapInc",
+              "branchPath": "mapInc:term",
+              "branch": "term",
+              "recursive": false
+            },
+            {
+              "id": "functional/map",
+              "version": "0.2.2",
+              "inputPorts": {
+                "fn": "function",
+                "data": "[generic]"
+              },
+              "outputPorts": {
+                "result": "[generic]"
+              },
+              "implementation": {
+                "nodes": [
+                  {
+                    "id": "array/first",
+                    "version": "0.1.0",
+                    "inputPorts": {
+                      "array": "[generic]"
+                    },
+                    "outputPorts": {
+                      "value": "generic"
+                    },
+                    "atomic": true,
+                    "path": [
+                      {
+                        "meta": "functional/map",
+                        "branch": "mapInc",
+                        "version": "0.2.2",
+                        "path": []
+                      },
+                      {
+                        "meta": "functional/map",
+                        "branch": "recMap",
+                        "version": "0.2.2",
+                        "path": [
+                          {
+                            "meta": "functional/map",
+                            "branch": "mapInc",
+                            "version": "0.2.2",
+                            "path": []
+                          }
+                        ]
+                      }
+                    ],
+                    "parent": "mapInc:recMap",
+                    "branchPath": "mapInc:recMap:first",
+                    "branch": "first",
+                    "recursive": false
+                  },
+                  {
+                    "id": "functional/apply",
+                    "version": "0.1.2",
+                    "inputPorts": {
+                      "fn": "function",
+                      "value": "function:arg"
+                    },
+                    "outputPorts": {
+                      "result": "function:return"
+                    },
+                    "atomic": true,
+                    "specialForm": true,
+                    "path": [
+                      {
+                        "meta": "functional/map",
+                        "branch": "mapInc",
+                        "version": "0.2.2",
+                        "path": []
+                      },
+                      {
+                        "meta": "functional/map",
+                        "branch": "recMap",
+                        "version": "0.2.2",
+                        "path": [
+                          {
+                            "meta": "functional/map",
+                            "branch": "mapInc",
+                            "version": "0.2.2",
+                            "path": []
+                          }
+                        ]
+                      }
+                    ],
+                    "parent": "mapInc:recMap",
+                    "branchPath": "mapInc:recMap:apply",
+                    "branch": "apply",
+                    "recursive": false
+                  },
+                  {
+                    "id": "array/rest",
+                    "version": "0.1.0",
+                    "inputPorts": {
+                      "array": "generic"
+                    },
+                    "outputPorts": {
+                      "rest": "generic"
+                    },
+                    "atomic": true,
+                    "path": [
+                      {
+                        "meta": "functional/map",
+                        "branch": "mapInc",
+                        "version": "0.2.2",
+                        "path": []
+                      },
+                      {
+                        "meta": "functional/map",
+                        "branch": "recMap",
+                        "version": "0.2.2",
+                        "path": [
+                          {
+                            "meta": "functional/map",
+                            "branch": "mapInc",
+                            "version": "0.2.2",
+                            "path": []
+                          }
+                        ]
+                      }
+                    ],
+                    "parent": "mapInc:recMap",
+                    "branchPath": "mapInc:recMap:rest",
+                    "branch": "rest",
+                    "recursive": false
+                  },
+                  {
+                    "id": "array/empty",
+                    "version": "0.1.0",
+                    "inputPorts": {
+                      "array": "generic"
+                    },
+                    "outputPorts": {
+                      "isEmpty": "bool"
+                    },
+                    "atomic": true,
+                    "path": [
+                      {
+                        "meta": "functional/map",
+                        "branch": "mapInc",
+                        "version": "0.2.2",
+                        "path": []
+                      },
+                      {
+                        "meta": "functional/map",
+                        "branch": "recMap",
+                        "version": "0.2.2",
+                        "path": [
+                          {
+                            "meta": "functional/map",
+                            "branch": "mapInc",
+                            "version": "0.2.2",
+                            "path": []
+                          }
+                        ]
+                      }
+                    ],
+                    "parent": "mapInc:recMap",
+                    "branchPath": "mapInc:recMap:empty",
+                    "branch": "empty",
+                    "recursive": false
+                  },
+                  {
+                    "name": "DEMUX",
+                    "id": "logic/demux",
+                    "inputPorts": {
+                      "input": "generic",
+                      "control": "bool"
+                    },
+                    "outputPorts": {
+                      "outTrue": "generic",
+                      "outFalse": "generic"
+                    },
+                    "atomic": true,
+                    "version": "0.2.0",
+                    "specialForm": true,
+                    "path": [
+                      {
+                        "meta": "functional/map",
+                        "branch": "mapInc",
+                        "version": "0.2.2",
+                        "path": []
+                      },
+                      {
+                        "meta": "functional/map",
+                        "branch": "recMap",
+                        "version": "0.2.2",
+                        "path": [
+                          {
+                            "meta": "functional/map",
+                            "branch": "mapInc",
+                            "version": "0.2.2",
+                            "path": []
+                          }
+                        ]
+                      }
+                    ],
+                    "parent": "mapInc:recMap",
+                    "branchPath": "mapInc:recMap:term",
+                    "branch": "term",
+                    "recursive": false
+                  },
+                  {
+                    "id": "functional/map",
+                    "version": "0.2.2",
+                    "inputPorts": {
+                      "fn": "function",
+                      "data": "[generic]"
+                    },
+                    "outputPorts": {
+                      "result": "[generic]"
+                    },
+                    "implementation": {
+                      "nodes": [
+                        {
+                          "meta": "array/first",
+                          "version": "0.1.0",
+                          "name": "first"
+                        },
+                        {
+                          "meta": "functional/apply",
+                          "version": "0.1.2",
+                          "name": "apply"
+                        },
+                        {
+                          "meta": "array/rest",
+                          "version": "0.1.0",
+                          "name": "rest"
+                        },
+                        {
+                          "meta": "array/empty",
+                          "version": "0.1.0",
+                          "name": "empty"
+                        },
+                        {
+                          "meta": "logic/demux",
+                          "version": "0.2.0",
+                          "name": "term"
+                        },
+                        {
+                          "meta": "functional/map",
+                          "version": "0.2.2",
+                          "name": "recMap"
+                        },
+                        {
+                          "meta": "control/join",
+                          "version": "0.2.0",
+                          "name": "join"
+                        },
+                        {
+                          "meta": "array/prepend",
+                          "version": "0.1.1",
+                          "name": "prep"
+                        }
+                      ],
+                      "edges": [
+                        {
+                          "from": "term:outFalse",
+                          "to": "first:array"
+                        },
+                        {
+                          "from": "data",
+                          "to": "term:input"
+                        },
+                        {
+                          "from": "data",
+                          "to": "empty:array"
+                        },
+                        {
+                          "from": "term:outTrue",
+                          "to": "join:in1"
+                        },
+                        {
+                          "from": "empty:isEmpty",
+                          "to": "term:control"
+                        },
+                        {
+                          "from": "first:value",
+                          "to": "apply:value"
+                        },
+                        {
+                          "from": "fn",
+                          "to": "apply:fn"
+                        },
+                        {
+                          "from": "apply:result",
+                          "to": "prep:value"
+                        },
+                        {
+                          "from": "term:outFalse",
+                          "to": "rest:array"
+                        },
+                        {
+                          "from": "rest:rest",
+                          "to": "recMap:data"
+                        },
+                        {
+                          "from": "fn",
+                          "to": "recMap:fn"
+                        },
+                        {
+                          "from": "prep:result",
+                          "to": "join:in2"
+                        },
+                        {
+                          "from": "recMap:result",
+                          "to": "prep:array"
+                        },
+                        {
+                          "from": "join:to",
+                          "to": "result"
+                        }
+                      ]
+                    },
+                    "path": [
+                      {
+                        "meta": "functional/map",
+                        "branch": "mapInc",
+                        "version": "0.2.2",
+                        "path": []
+                      },
+                      {
+                        "meta": "functional/map",
+                        "branch": "recMap",
+                        "version": "0.2.2",
+                        "path": [
+                          {
+                            "meta": "functional/map",
+                            "branch": "mapInc",
+                            "version": "0.2.2",
+                            "path": []
+                          }
+                        ]
+                      }
+                    ],
+                    "parent": "mapInc:recMap",
+                    "branchPath": "mapInc:recMap:recMap",
+                    "branch": "recMap",
+                    "recursive": true
+                  },
+                  {
+                    "id": "control/join",
+                    "version": "0.2.0",
+                    "inputPorts": {
+                      "in1": "generic",
+                      "in2": "generic"
+                    },
+                    "outputPorts": {
+                      "to": "generic"
+                    },
+                    "atomic": true,
+                    "specialForm": true,
+                    "path": [
+                      {
+                        "meta": "functional/map",
+                        "branch": "mapInc",
+                        "version": "0.2.2",
+                        "path": []
+                      },
+                      {
+                        "meta": "functional/map",
+                        "branch": "recMap",
+                        "version": "0.2.2",
+                        "path": [
+                          {
+                            "meta": "functional/map",
+                            "branch": "mapInc",
+                            "version": "0.2.2",
+                            "path": []
+                          }
+                        ]
+                      }
+                    ],
+                    "parent": "mapInc:recMap",
+                    "branchPath": "mapInc:recMap:join",
+                    "branch": "join",
+                    "recursive": false
+                  },
+                  {
+                    "id": "array/prepend",
+                    "version": "0.1.1",
+                    "inputPorts": {
+                      "value": "generic",
+                      "array": "[generic]"
+                    },
+                    "outputPorts": {
+                      "result": "[generic]"
+                    },
+                    "atomic": true,
+                    "path": [
+                      {
+                        "meta": "functional/map",
+                        "branch": "mapInc",
+                        "version": "0.2.2",
+                        "path": []
+                      },
+                      {
+                        "meta": "functional/map",
+                        "branch": "recMap",
+                        "version": "0.2.2",
+                        "path": [
+                          {
+                            "meta": "functional/map",
+                            "branch": "mapInc",
+                            "version": "0.2.2",
+                            "path": []
+                          }
+                        ]
+                      }
+                    ],
+                    "parent": "mapInc:recMap",
+                    "branchPath": "mapInc:recMap:prep",
+                    "branch": "prep",
+                    "recursive": false
+                  }
+                ],
+                "edges": [
+                  {
+                    "from": "term:outFalse",
+                    "to": "first:array"
+                  },
+                  {
+                    "from": "data",
+                    "to": "term:input"
+                  },
+                  {
+                    "from": "data",
+                    "to": "empty:array"
+                  },
+                  {
+                    "from": "term:outTrue",
+                    "to": "join:in1"
+                  },
+                  {
+                    "from": "empty:isEmpty",
+                    "to": "term:control"
+                  },
+                  {
+                    "from": "first:value",
+                    "to": "apply:value"
+                  },
+                  {
+                    "from": "fn",
+                    "to": "apply:fn"
+                  },
+                  {
+                    "from": "apply:result",
+                    "to": "prep:value"
+                  },
+                  {
+                    "from": "term:outFalse",
+                    "to": "rest:array"
+                  },
+                  {
+                    "from": "rest:rest",
+                    "to": "recMap:data"
+                  },
+                  {
+                    "from": "fn",
+                    "to": "recMap:fn"
+                  },
+                  {
+                    "from": "prep:result",
+                    "to": "join:in2"
+                  },
+                  {
+                    "from": "recMap:result",
+                    "to": "prep:array"
+                  },
+                  {
+                    "from": "join:to",
+                    "to": "result"
+                  }
+                ]
+              },
+              "path": [
+                {
+                  "meta": "functional/map",
+                  "branch": "mapInc",
+                  "version": "0.2.2",
+                  "path": []
+                }
+              ],
+              "parent": "mapInc",
+              "branchPath": "mapInc:recMap",
+              "branch": "recMap",
+              "recursesTo": {
+                "meta": "functional/map",
+                "branch": "mapInc",
+                "version": "0.2.2",
+                "path": []
+              },
+              "recursive": true
+            },
+            {
+              "id": "control/join",
+              "version": "0.2.0",
+              "inputPorts": {
+                "in1": "generic",
+                "in2": "generic"
+              },
+              "outputPorts": {
+                "to": "generic"
+              },
+              "atomic": true,
+              "specialForm": true,
+              "path": [
+                {
+                  "meta": "functional/map",
+                  "branch": "mapInc",
+                  "version": "0.2.2",
+                  "path": []
+                }
+              ],
+              "parent": "mapInc",
+              "branchPath": "mapInc:join",
+              "branch": "join",
+              "recursive": false
+            },
+            {
+              "id": "array/prepend",
+              "version": "0.1.1",
+              "inputPorts": {
+                "value": "generic",
+                "array": "[generic]"
+              },
+              "outputPorts": {
+                "result": "[generic]"
+              },
+              "atomic": true,
+              "path": [
+                {
+                  "meta": "functional/map",
+                  "branch": "mapInc",
+                  "version": "0.2.2",
+                  "path": []
+                }
+              ],
+              "parent": "mapInc",
+              "branchPath": "mapInc:prep",
+              "branch": "prep",
+              "recursive": false
+            }
+          ],
+          "edges": [
+            {
+              "from": "term:outFalse",
+              "to": "first:array"
+            },
+            {
+              "from": "data",
+              "to": "term:input"
+            },
+            {
+              "from": "data",
+              "to": "empty:array"
+            },
+            {
+              "from": "term:outTrue",
+              "to": "join:in1"
+            },
+            {
+              "from": "empty:isEmpty",
+              "to": "term:control"
+            },
+            {
+              "from": "first:value",
+              "to": "apply:value"
+            },
+            {
+              "from": "fn",
+              "to": "apply:fn"
+            },
+            {
+              "from": "apply:result",
+              "to": "prep:value"
+            },
+            {
+              "from": "term:outFalse",
+              "to": "rest:array"
+            },
+            {
+              "from": "rest:rest",
+              "to": "recMap:data"
+            },
+            {
+              "from": "fn",
+              "to": "recMap:fn"
+            },
+            {
+              "from": "prep:result",
+              "to": "join:in2"
+            },
+            {
+              "from": "recMap:result",
+              "to": "prep:array"
+            },
+            {
+              "from": "join:to",
+              "to": "result"
+            }
+          ]
+        },
+        "path": [],
+        "branchPath": "mapInc",
+        "branch": "mapInc",
+        "name": "mapInc",
+        "recursive": false,
+        "typeHint": {},
+        "nodeType": "process"
+      }
+    },
+    {
+      "v": "mapInc:first",
+      "value": {
+        "id": "array/first",
+        "version": "0.1.0",
+        "inputPorts": {
+          "array": "[generic]"
+        },
+        "outputPorts": {
+          "value": "generic"
+        },
+        "atomic": true,
+        "path": [
+          {
+            "meta": "functional/map",
+            "branch": "mapInc",
+            "version": "0.2.2",
+            "path": []
+          }
+        ],
+        "parent": "mapInc",
+        "branchPath": "mapInc:first",
+        "branch": "first",
+        "recursive": false,
+        "typeHint": {},
+        "nodeType": "process"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:apply",
+      "value": {
+        "id": "functional/apply",
+        "version": "0.1.2",
+        "inputPorts": {
+          "fn": {
+            "arguments": {
+              "i": "int64"
+            },
+            "return": "int64"
+          },
+          "value": "int64"
+        },
+        "outputPorts": {
+          "result": "int64"
+        },
+        "atomic": true,
+        "specialForm": true,
+        "path": [
+          {
+            "meta": "functional/map",
+            "branch": "mapInc",
+            "version": "0.2.2",
+            "path": []
+          }
+        ],
+        "parent": "mapInc",
+        "branchPath": "mapInc:apply",
+        "branch": "apply",
+        "recursive": false,
+        "typeHint": {},
+        "nodeType": "process"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:rest",
+      "value": {
+        "id": "array/rest",
+        "version": "0.1.0",
+        "inputPorts": {
+          "array": "int64"
+        },
+        "outputPorts": {
+          "rest": "int64"
+        },
+        "atomic": true,
+        "path": [
+          {
+            "meta": "functional/map",
+            "branch": "mapInc",
+            "version": "0.2.2",
+            "path": []
+          }
+        ],
+        "parent": "mapInc",
+        "branchPath": "mapInc:rest",
+        "branch": "rest",
+        "recursive": false,
+        "typeHint": {},
+        "nodeType": "process"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:empty",
+      "value": {
+        "id": "array/empty",
+        "version": "0.1.0",
+        "inputPorts": {
+          "array": "generic"
+        },
+        "outputPorts": {
+          "isEmpty": "bool"
+        },
+        "atomic": true,
+        "path": [
+          {
+            "meta": "functional/map",
+            "branch": "mapInc",
+            "version": "0.2.2",
+            "path": []
+          }
+        ],
+        "parent": "mapInc",
+        "branchPath": "mapInc:empty",
+        "branch": "empty",
+        "recursive": false,
+        "typeHint": {},
+        "nodeType": "process"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:term",
+      "value": {
+        "name": "DEMUX",
+        "id": "logic/demux",
+        "inputPorts": {
+          "input": "int64",
+          "control": "bool"
+        },
+        "outputPorts": {
+          "outTrue": "int64",
+          "outFalse": "int64"
+        },
+        "atomic": true,
+        "version": "0.2.0",
+        "specialForm": true,
+        "path": [
+          {
+            "meta": "functional/map",
+            "branch": "mapInc",
+            "version": "0.2.2",
+            "path": []
+          }
+        ],
+        "parent": "mapInc",
+        "branchPath": "mapInc:term",
+        "branch": "term",
+        "recursive": false,
+        "typeHint": {},
+        "nodeType": "process"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:recMap",
+      "value": {
+        "id": "functional/map",
+        "version": "0.2.2",
+        "inputPorts": {
+          "fn": {
+            "arguments": {
+              "i": "int64"
+            },
+            "return": "int64"
+          },
+          "data": "[int64]"
+        },
+        "outputPorts": {
+          "result": "[int64]"
+        },
+        "implementation": {
+          "nodes": [
+            {
+              "id": "array/first",
+              "version": "0.1.0",
+              "inputPorts": {
+                "array": "[generic]"
+              },
+              "outputPorts": {
+                "value": "generic"
+              },
+              "atomic": true,
+              "path": [
+                {
+                  "meta": "functional/map",
+                  "branch": "mapInc",
+                  "version": "0.2.2",
+                  "path": []
+                },
+                {
+                  "meta": "functional/map",
+                  "branch": "recMap",
+                  "version": "0.2.2",
+                  "path": [
+                    {
+                      "meta": "functional/map",
+                      "branch": "mapInc",
+                      "version": "0.2.2",
+                      "path": []
+                    }
+                  ]
+                }
+              ],
+              "parent": "mapInc:recMap",
+              "branchPath": "mapInc:recMap:first",
+              "branch": "first",
+              "recursive": false
+            },
+            {
+              "id": "functional/apply",
+              "version": "0.1.2",
+              "inputPorts": {
+                "fn": "function",
+                "value": "function:arg"
+              },
+              "outputPorts": {
+                "result": "function:return"
+              },
+              "atomic": true,
+              "specialForm": true,
+              "path": [
+                {
+                  "meta": "functional/map",
+                  "branch": "mapInc",
+                  "version": "0.2.2",
+                  "path": []
+                },
+                {
+                  "meta": "functional/map",
+                  "branch": "recMap",
+                  "version": "0.2.2",
+                  "path": [
+                    {
+                      "meta": "functional/map",
+                      "branch": "mapInc",
+                      "version": "0.2.2",
+                      "path": []
+                    }
+                  ]
+                }
+              ],
+              "parent": "mapInc:recMap",
+              "branchPath": "mapInc:recMap:apply",
+              "branch": "apply",
+              "recursive": false
+            },
+            {
+              "id": "array/rest",
+              "version": "0.1.0",
+              "inputPorts": {
+                "array": "generic"
+              },
+              "outputPorts": {
+                "rest": "generic"
+              },
+              "atomic": true,
+              "path": [
+                {
+                  "meta": "functional/map",
+                  "branch": "mapInc",
+                  "version": "0.2.2",
+                  "path": []
+                },
+                {
+                  "meta": "functional/map",
+                  "branch": "recMap",
+                  "version": "0.2.2",
+                  "path": [
+                    {
+                      "meta": "functional/map",
+                      "branch": "mapInc",
+                      "version": "0.2.2",
+                      "path": []
+                    }
+                  ]
+                }
+              ],
+              "parent": "mapInc:recMap",
+              "branchPath": "mapInc:recMap:rest",
+              "branch": "rest",
+              "recursive": false
+            },
+            {
+              "id": "array/empty",
+              "version": "0.1.0",
+              "inputPorts": {
+                "array": "generic"
+              },
+              "outputPorts": {
+                "isEmpty": "bool"
+              },
+              "atomic": true,
+              "path": [
+                {
+                  "meta": "functional/map",
+                  "branch": "mapInc",
+                  "version": "0.2.2",
+                  "path": []
+                },
+                {
+                  "meta": "functional/map",
+                  "branch": "recMap",
+                  "version": "0.2.2",
+                  "path": [
+                    {
+                      "meta": "functional/map",
+                      "branch": "mapInc",
+                      "version": "0.2.2",
+                      "path": []
+                    }
+                  ]
+                }
+              ],
+              "parent": "mapInc:recMap",
+              "branchPath": "mapInc:recMap:empty",
+              "branch": "empty",
+              "recursive": false
+            },
+            {
+              "name": "DEMUX",
+              "id": "logic/demux",
+              "inputPorts": {
+                "input": "generic",
+                "control": "bool"
+              },
+              "outputPorts": {
+                "outTrue": "generic",
+                "outFalse": "generic"
+              },
+              "atomic": true,
+              "version": "0.2.0",
+              "specialForm": true,
+              "path": [
+                {
+                  "meta": "functional/map",
+                  "branch": "mapInc",
+                  "version": "0.2.2",
+                  "path": []
+                },
+                {
+                  "meta": "functional/map",
+                  "branch": "recMap",
+                  "version": "0.2.2",
+                  "path": [
+                    {
+                      "meta": "functional/map",
+                      "branch": "mapInc",
+                      "version": "0.2.2",
+                      "path": []
+                    }
+                  ]
+                }
+              ],
+              "parent": "mapInc:recMap",
+              "branchPath": "mapInc:recMap:term",
+              "branch": "term",
+              "recursive": false
+            },
+            {
+              "id": "functional/map",
+              "version": "0.2.2",
+              "inputPorts": {
+                "fn": "function",
+                "data": "[generic]"
+              },
+              "outputPorts": {
+                "result": "[generic]"
+              },
+              "implementation": {
+                "nodes": [
+                  {
+                    "meta": "array/first",
+                    "version": "0.1.0",
+                    "name": "first"
+                  },
+                  {
+                    "meta": "functional/apply",
+                    "version": "0.1.2",
+                    "name": "apply"
+                  },
+                  {
+                    "meta": "array/rest",
+                    "version": "0.1.0",
+                    "name": "rest"
+                  },
+                  {
+                    "meta": "array/empty",
+                    "version": "0.1.0",
+                    "name": "empty"
+                  },
+                  {
+                    "meta": "logic/demux",
+                    "version": "0.2.0",
+                    "name": "term"
+                  },
+                  {
+                    "meta": "functional/map",
+                    "version": "0.2.2",
+                    "name": "recMap"
+                  },
+                  {
+                    "meta": "control/join",
+                    "version": "0.2.0",
+                    "name": "join"
+                  },
+                  {
+                    "meta": "array/prepend",
+                    "version": "0.1.1",
+                    "name": "prep"
+                  }
+                ],
+                "edges": [
+                  {
+                    "from": "term:outFalse",
+                    "to": "first:array"
+                  },
+                  {
+                    "from": "data",
+                    "to": "term:input"
+                  },
+                  {
+                    "from": "data",
+                    "to": "empty:array"
+                  },
+                  {
+                    "from": "term:outTrue",
+                    "to": "join:in1"
+                  },
+                  {
+                    "from": "empty:isEmpty",
+                    "to": "term:control"
+                  },
+                  {
+                    "from": "first:value",
+                    "to": "apply:value"
+                  },
+                  {
+                    "from": "fn",
+                    "to": "apply:fn"
+                  },
+                  {
+                    "from": "apply:result",
+                    "to": "prep:value"
+                  },
+                  {
+                    "from": "term:outFalse",
+                    "to": "rest:array"
+                  },
+                  {
+                    "from": "rest:rest",
+                    "to": "recMap:data"
+                  },
+                  {
+                    "from": "fn",
+                    "to": "recMap:fn"
+                  },
+                  {
+                    "from": "prep:result",
+                    "to": "join:in2"
+                  },
+                  {
+                    "from": "recMap:result",
+                    "to": "prep:array"
+                  },
+                  {
+                    "from": "join:to",
+                    "to": "result"
+                  }
+                ]
+              },
+              "path": [
+                {
+                  "meta": "functional/map",
+                  "branch": "mapInc",
+                  "version": "0.2.2",
+                  "path": []
+                },
+                {
+                  "meta": "functional/map",
+                  "branch": "recMap",
+                  "version": "0.2.2",
+                  "path": [
+                    {
+                      "meta": "functional/map",
+                      "branch": "mapInc",
+                      "version": "0.2.2",
+                      "path": []
+                    }
+                  ]
+                }
+              ],
+              "parent": "mapInc:recMap",
+              "branchPath": "mapInc:recMap:recMap",
+              "branch": "recMap",
+              "recursive": true
+            },
+            {
+              "id": "control/join",
+              "version": "0.2.0",
+              "inputPorts": {
+                "in1": "generic",
+                "in2": "generic"
+              },
+              "outputPorts": {
+                "to": "generic"
+              },
+              "atomic": true,
+              "specialForm": true,
+              "path": [
+                {
+                  "meta": "functional/map",
+                  "branch": "mapInc",
+                  "version": "0.2.2",
+                  "path": []
+                },
+                {
+                  "meta": "functional/map",
+                  "branch": "recMap",
+                  "version": "0.2.2",
+                  "path": [
+                    {
+                      "meta": "functional/map",
+                      "branch": "mapInc",
+                      "version": "0.2.2",
+                      "path": []
+                    }
+                  ]
+                }
+              ],
+              "parent": "mapInc:recMap",
+              "branchPath": "mapInc:recMap:join",
+              "branch": "join",
+              "recursive": false
+            },
+            {
+              "id": "array/prepend",
+              "version": "0.1.1",
+              "inputPorts": {
+                "value": "generic",
+                "array": "[generic]"
+              },
+              "outputPorts": {
+                "result": "[generic]"
+              },
+              "atomic": true,
+              "path": [
+                {
+                  "meta": "functional/map",
+                  "branch": "mapInc",
+                  "version": "0.2.2",
+                  "path": []
+                },
+                {
+                  "meta": "functional/map",
+                  "branch": "recMap",
+                  "version": "0.2.2",
+                  "path": [
+                    {
+                      "meta": "functional/map",
+                      "branch": "mapInc",
+                      "version": "0.2.2",
+                      "path": []
+                    }
+                  ]
+                }
+              ],
+              "parent": "mapInc:recMap",
+              "branchPath": "mapInc:recMap:prep",
+              "branch": "prep",
+              "recursive": false
+            }
+          ],
+          "edges": [
+            {
+              "from": "term:outFalse",
+              "to": "first:array"
+            },
+            {
+              "from": "data",
+              "to": "term:input"
+            },
+            {
+              "from": "data",
+              "to": "empty:array"
+            },
+            {
+              "from": "term:outTrue",
+              "to": "join:in1"
+            },
+            {
+              "from": "empty:isEmpty",
+              "to": "term:control"
+            },
+            {
+              "from": "first:value",
+              "to": "apply:value"
+            },
+            {
+              "from": "fn",
+              "to": "apply:fn"
+            },
+            {
+              "from": "apply:result",
+              "to": "prep:value"
+            },
+            {
+              "from": "term:outFalse",
+              "to": "rest:array"
+            },
+            {
+              "from": "rest:rest",
+              "to": "recMap:data"
+            },
+            {
+              "from": "fn",
+              "to": "recMap:fn"
+            },
+            {
+              "from": "prep:result",
+              "to": "join:in2"
+            },
+            {
+              "from": "recMap:result",
+              "to": "prep:array"
+            },
+            {
+              "from": "join:to",
+              "to": "result"
+            }
+          ]
+        },
+        "path": [
+          {
+            "meta": "functional/map",
+            "branch": "mapInc",
+            "version": "0.2.2",
+            "path": []
+          }
+        ],
+        "parent": "mapInc",
+        "branchPath": "mapInc:recMap",
+        "branch": "recMap",
+        "recursesTo": {
+          "meta": "functional/map",
+          "branch": "mapInc",
+          "version": "0.2.2",
+          "path": []
+        },
+        "recursive": true,
+        "typeHint": {},
+        "nodeType": "process"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:recMap:first",
+      "value": {
+        "id": "array/first",
+        "version": "0.1.0",
+        "inputPorts": {
+          "array": "[generic]"
+        },
+        "outputPorts": {
+          "value": "generic"
+        },
+        "atomic": true,
+        "path": [
+          {
+            "meta": "functional/map",
+            "branch": "mapInc",
+            "version": "0.2.2",
+            "path": []
+          },
+          {
+            "meta": "functional/map",
+            "branch": "recMap",
+            "version": "0.2.2",
+            "path": [
+              {
+                "meta": "functional/map",
+                "branch": "mapInc",
+                "version": "0.2.2",
+                "path": []
+              }
+            ]
+          }
+        ],
+        "parent": "mapInc:recMap",
+        "branchPath": "mapInc:recMap:first",
+        "branch": "first",
+        "recursive": false,
+        "typeHint": {},
+        "nodeType": "process"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap:apply",
+      "value": {
+        "id": "functional/apply",
+        "version": "0.1.2",
+        "inputPorts": {
+          "fn": {
+            "arguments": {
+              "i": "int64"
+            },
+            "return": "int64"
+          },
+          "value": "int64"
+        },
+        "outputPorts": {
+          "result": "int64"
+        },
+        "atomic": true,
+        "specialForm": true,
+        "path": [
+          {
+            "meta": "functional/map",
+            "branch": "mapInc",
+            "version": "0.2.2",
+            "path": []
+          },
+          {
+            "meta": "functional/map",
+            "branch": "recMap",
+            "version": "0.2.2",
+            "path": [
+              {
+                "meta": "functional/map",
+                "branch": "mapInc",
+                "version": "0.2.2",
+                "path": []
+              }
+            ]
+          }
+        ],
+        "parent": "mapInc:recMap",
+        "branchPath": "mapInc:recMap:apply",
+        "branch": "apply",
+        "recursive": false,
+        "typeHint": {},
+        "nodeType": "process"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap:rest",
+      "value": {
+        "id": "array/rest",
+        "version": "0.1.0",
+        "inputPorts": {
+          "array": "generic"
+        },
+        "outputPorts": {
+          "rest": "generic"
+        },
+        "atomic": true,
+        "path": [
+          {
+            "meta": "functional/map",
+            "branch": "mapInc",
+            "version": "0.2.2",
+            "path": []
+          },
+          {
+            "meta": "functional/map",
+            "branch": "recMap",
+            "version": "0.2.2",
+            "path": [
+              {
+                "meta": "functional/map",
+                "branch": "mapInc",
+                "version": "0.2.2",
+                "path": []
+              }
+            ]
+          }
+        ],
+        "parent": "mapInc:recMap",
+        "branchPath": "mapInc:recMap:rest",
+        "branch": "rest",
+        "recursive": false,
+        "typeHint": {},
+        "nodeType": "process"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap:empty",
+      "value": {
+        "id": "array/empty",
+        "version": "0.1.0",
+        "inputPorts": {
+          "array": "generic"
+        },
+        "outputPorts": {
+          "isEmpty": "bool"
+        },
+        "atomic": true,
+        "path": [
+          {
+            "meta": "functional/map",
+            "branch": "mapInc",
+            "version": "0.2.2",
+            "path": []
+          },
+          {
+            "meta": "functional/map",
+            "branch": "recMap",
+            "version": "0.2.2",
+            "path": [
+              {
+                "meta": "functional/map",
+                "branch": "mapInc",
+                "version": "0.2.2",
+                "path": []
+              }
+            ]
+          }
+        ],
+        "parent": "mapInc:recMap",
+        "branchPath": "mapInc:recMap:empty",
+        "branch": "empty",
+        "recursive": false,
+        "typeHint": {},
+        "nodeType": "process"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap:term",
+      "value": {
+        "name": "DEMUX",
+        "id": "logic/demux",
+        "inputPorts": {
+          "input": "int64",
+          "control": "bool"
+        },
+        "outputPorts": {
+          "outTrue": "int64",
+          "outFalse": "int64"
+        },
+        "atomic": true,
+        "version": "0.2.0",
+        "specialForm": true,
+        "path": [
+          {
+            "meta": "functional/map",
+            "branch": "mapInc",
+            "version": "0.2.2",
+            "path": []
+          },
+          {
+            "meta": "functional/map",
+            "branch": "recMap",
+            "version": "0.2.2",
+            "path": [
+              {
+                "meta": "functional/map",
+                "branch": "mapInc",
+                "version": "0.2.2",
+                "path": []
+              }
+            ]
+          }
+        ],
+        "parent": "mapInc:recMap",
+        "branchPath": "mapInc:recMap:term",
+        "branch": "term",
+        "recursive": false,
+        "typeHint": {},
+        "nodeType": "process"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap:recMap",
+      "value": {
+        "id": "functional/map",
+        "version": "0.2.2",
+        "inputPorts": {
+          "fn": {
+            "arguments": {
+              "i": "int64"
+            },
+            "return": "int64"
+          },
+          "data": "[generic]"
+        },
+        "outputPorts": {
+          "result": "[generic]"
+        },
+        "implementation": {
+          "nodes": [
+            {
+              "meta": "array/first",
+              "version": "0.1.0",
+              "name": "first"
+            },
+            {
+              "meta": "functional/apply",
+              "version": "0.1.2",
+              "name": "apply"
+            },
+            {
+              "meta": "array/rest",
+              "version": "0.1.0",
+              "name": "rest"
+            },
+            {
+              "meta": "array/empty",
+              "version": "0.1.0",
+              "name": "empty"
+            },
+            {
+              "meta": "logic/demux",
+              "version": "0.2.0",
+              "name": "term"
+            },
+            {
+              "meta": "functional/map",
+              "version": "0.2.2",
+              "name": "recMap"
+            },
+            {
+              "meta": "control/join",
+              "version": "0.2.0",
+              "name": "join"
+            },
+            {
+              "meta": "array/prepend",
+              "version": "0.1.1",
+              "name": "prep"
+            }
+          ],
+          "edges": [
+            {
+              "from": "term:outFalse",
+              "to": "first:array"
+            },
+            {
+              "from": "data",
+              "to": "term:input"
+            },
+            {
+              "from": "data",
+              "to": "empty:array"
+            },
+            {
+              "from": "term:outTrue",
+              "to": "join:in1"
+            },
+            {
+              "from": "empty:isEmpty",
+              "to": "term:control"
+            },
+            {
+              "from": "first:value",
+              "to": "apply:value"
+            },
+            {
+              "from": "fn",
+              "to": "apply:fn"
+            },
+            {
+              "from": "apply:result",
+              "to": "prep:value"
+            },
+            {
+              "from": "term:outFalse",
+              "to": "rest:array"
+            },
+            {
+              "from": "rest:rest",
+              "to": "recMap:data"
+            },
+            {
+              "from": "fn",
+              "to": "recMap:fn"
+            },
+            {
+              "from": "prep:result",
+              "to": "join:in2"
+            },
+            {
+              "from": "recMap:result",
+              "to": "prep:array"
+            },
+            {
+              "from": "join:to",
+              "to": "result"
+            }
+          ]
+        },
+        "path": [
+          {
+            "meta": "functional/map",
+            "branch": "mapInc",
+            "version": "0.2.2",
+            "path": []
+          },
+          {
+            "meta": "functional/map",
+            "branch": "recMap",
+            "version": "0.2.2",
+            "path": [
+              {
+                "meta": "functional/map",
+                "branch": "mapInc",
+                "version": "0.2.2",
+                "path": []
+              }
+            ]
+          }
+        ],
+        "parent": "mapInc:recMap",
+        "branchPath": "mapInc:recMap:recMap",
+        "branch": "recMap",
+        "recursive": true,
+        "typeHint": {},
+        "nodeType": "process"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap:join",
+      "value": {
+        "id": "control/join",
+        "version": "0.2.0",
+        "inputPorts": {
+          "in1": "int64",
+          "in2": "int64"
+        },
+        "outputPorts": {
+          "to": "int64"
+        },
+        "atomic": true,
+        "specialForm": true,
+        "path": [
+          {
+            "meta": "functional/map",
+            "branch": "mapInc",
+            "version": "0.2.2",
+            "path": []
+          },
+          {
+            "meta": "functional/map",
+            "branch": "recMap",
+            "version": "0.2.2",
+            "path": [
+              {
+                "meta": "functional/map",
+                "branch": "mapInc",
+                "version": "0.2.2",
+                "path": []
+              }
+            ]
+          }
+        ],
+        "parent": "mapInc:recMap",
+        "branchPath": "mapInc:recMap:join",
+        "branch": "join",
+        "recursive": false,
+        "typeHint": {},
+        "nodeType": "process"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap:prep",
+      "value": {
+        "id": "array/prepend",
+        "version": "0.1.1",
+        "inputPorts": {
+          "value": "int64",
+          "array": "[int64]"
+        },
+        "outputPorts": {
+          "result": "[int64]"
+        },
+        "atomic": true,
+        "path": [
+          {
+            "meta": "functional/map",
+            "branch": "mapInc",
+            "version": "0.2.2",
+            "path": []
+          },
+          {
+            "meta": "functional/map",
+            "branch": "recMap",
+            "version": "0.2.2",
+            "path": [
+              {
+                "meta": "functional/map",
+                "branch": "mapInc",
+                "version": "0.2.2",
+                "path": []
+              }
+            ]
+          }
+        ],
+        "parent": "mapInc:recMap",
+        "branchPath": "mapInc:recMap:prep",
+        "branch": "prep",
+        "recursive": false,
+        "typeHint": {},
+        "nodeType": "process"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:join",
+      "value": {
+        "id": "control/join",
+        "version": "0.2.0",
+        "inputPorts": {
+          "in1": "int64",
+          "in2": "int64"
+        },
+        "outputPorts": {
+          "to": "int64"
+        },
+        "atomic": true,
+        "specialForm": true,
+        "path": [
+          {
+            "meta": "functional/map",
+            "branch": "mapInc",
+            "version": "0.2.2",
+            "path": []
+          }
+        ],
+        "parent": "mapInc",
+        "branchPath": "mapInc:join",
+        "branch": "join",
+        "recursive": false,
+        "typeHint": {},
+        "nodeType": "process"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:prep",
+      "value": {
+        "id": "array/prepend",
+        "version": "0.1.1",
+        "inputPorts": {
+          "value": "int64",
+          "array": "[int64]"
+        },
+        "outputPorts": {
+          "result": "[int64]"
+        },
+        "atomic": true,
+        "path": [
+          {
+            "meta": "functional/map",
+            "branch": "mapInc",
+            "version": "0.2.2",
+            "path": []
+          }
+        ],
+        "parent": "mapInc",
+        "branchPath": "mapInc:prep",
+        "branch": "prep",
+        "recursive": false,
+        "typeHint": {},
+        "nodeType": "process"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "arrToStr",
+      "value": {
+        "id": "translator/array_to_string",
+        "version": "0.1.0",
+        "inputPorts": {
+          "input": "[int64]"
+        },
+        "outputPorts": {
+          "output": "string"
+        },
+        "atomic": true,
+        "path": [],
+        "branchPath": "arrToStr",
+        "branch": "arrToStr",
+        "name": "arrToStr",
+        "recursive": false,
+        "typeHint": {},
+        "nodeType": "process"
+      }
+    },
+    {
+      "v": "out",
+      "value": {
+        "id": "io/stdout",
+        "version": "0.2.0",
+        "inputPorts": {
+          "input": "string"
+        },
+        "outputPorts": {},
+        "atomic": true,
+        "path": [],
+        "branchPath": "out",
+        "branch": "out",
+        "name": "out",
+        "recursive": false,
+        "typeHint": {},
+        "nodeType": "process"
+      }
+    },
+    {
+      "v": "mapInc_data_DUPLICATE_0_1",
+      "value": {
+        "id": "control/duplicate",
+        "version": "0.2.0",
+        "inputPorts": {
+          "in": "int64"
+        },
+        "outputPorts": {
+          "d1": "int64",
+          "d2": "int64"
+        },
+        "atomic": true,
+        "typeHint": {},
+        "nodeType": "process"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc_fn_DUPLICATE_0_1",
+      "value": {
+        "id": "control/duplicate",
+        "version": "0.2.0",
+        "inputPorts": {
+          "in": {
+            "arguments": {
+              "i": "int64"
+            },
+            "return": "int64"
+          }
+        },
+        "outputPorts": {
+          "d1": {
+            "arguments": {
+              "i": "int64"
+            },
+            "return": "int64"
+          },
+          "d2": {
+            "arguments": {
+              "i": "int64"
+            },
+            "return": "int64"
+          }
+        },
+        "atomic": true,
+        "typeHint": {},
+        "nodeType": "process"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:term_outFalse_DUPLICATE_0_1",
+      "value": {
+        "id": "control/duplicate",
+        "version": "0.2.0",
+        "inputPorts": {
+          "in": "int64"
+        },
+        "outputPorts": {
+          "d1": "int64",
+          "d2": "int64"
+        },
+        "atomic": true,
+        "typeHint": {},
+        "nodeType": "process"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:recMap_data_DUPLICATE_0_1",
+      "value": {
+        "id": "control/duplicate",
+        "version": "0.2.0",
+        "inputPorts": {
+          "in": "int64"
+        },
+        "outputPorts": {
+          "d1": "int64",
+          "d2": "int64"
+        },
+        "atomic": true,
+        "typeHint": {},
+        "nodeType": "process"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap_fn_DUPLICATE_0_1",
+      "value": {
+        "id": "control/duplicate",
+        "version": "0.2.0",
+        "inputPorts": {
+          "in": {
+            "arguments": {
+              "i": "int64"
+            },
+            "return": "int64"
+          }
+        },
+        "outputPorts": {
+          "d1": {
+            "arguments": {
+              "i": "int64"
+            },
+            "return": "int64"
+          },
+          "d2": {
+            "arguments": {
+              "i": "int64"
+            },
+            "return": "int64"
+          }
+        },
+        "atomic": true,
+        "typeHint": {},
+        "nodeType": "process"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap:term_outFalse_DUPLICATE_0_1",
+      "value": {
+        "id": "control/duplicate",
+        "version": "0.2.0",
+        "inputPorts": {
+          "in": "int64"
+        },
+        "outputPorts": {
+          "d1": "int64",
+          "d2": "int64"
+        },
+        "atomic": true,
+        "typeHint": {},
+        "nodeType": "process"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "strToArr_PORT_input",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "input",
+        "process": "strToArr"
+      }
+    },
+    {
+      "v": "in_PORT_output",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "output",
+        "process": "in"
+      }
+    },
+    {
+      "v": "mapInc_PORT_data",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "data",
+        "hierarchyBorder": true,
+        "process": "mapInc"
+      }
+    },
+    {
+      "v": "strToArr_PORT_output",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "output",
+        "process": "strToArr"
+      }
+    },
+    {
+      "v": "mapInc_PORT_fn",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "fn",
+        "hierarchyBorder": true,
+        "process": "mapInc"
+      }
+    },
+    {
+      "v": "lambda_inc_PORT_fn",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "fn",
+        "process": "lambda_inc"
+      }
+    },
+    {
+      "v": "arrToStr_PORT_input",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "input",
+        "process": "arrToStr"
+      }
+    },
+    {
+      "v": "mapInc_PORT_result",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "result",
+        "hierarchyBorder": true,
+        "process": "mapInc"
+      }
+    },
+    {
+      "v": "out_PORT_input",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "input",
+        "process": "out"
+      }
+    },
+    {
+      "v": "arrToStr_PORT_output",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "output",
+        "process": "arrToStr"
+      }
+    },
+    {
+      "v": "inc_lambda:add_PORT_s1",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "s1",
+        "process": "inc_lambda:add"
+      },
+      "parent": "inc_lambda"
+    },
+    {
+      "v": "inc_lambda_PORT_i",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "i",
+        "hierarchyBorder": true,
+        "process": "inc_lambda"
+      }
+    },
+    {
+      "v": "inc_lambda:add_PORT_s2",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "s2",
+        "process": "inc_lambda:add"
+      },
+      "parent": "inc_lambda"
+    },
+    {
+      "v": "inc_lambda:c_PORT_output",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "output",
+        "process": "inc_lambda:c"
+      },
+      "parent": "inc_lambda"
+    },
+    {
+      "v": "inc_lambda_PORT_inc",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "inc",
+        "hierarchyBorder": true,
+        "process": "inc_lambda"
+      }
+    },
+    {
+      "v": "inc_lambda:add_PORT_sum",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "sum",
+        "process": "inc_lambda:add"
+      },
+      "parent": "inc_lambda"
+    },
+    {
+      "v": "mapInc:join_PORT_in1",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "in1",
+        "process": "mapInc:join"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:term_PORT_outTrue",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "outTrue",
+        "process": "mapInc:term"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:term_PORT_control",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "control",
+        "process": "mapInc:term"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:empty_PORT_isEmpty",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "isEmpty",
+        "process": "mapInc:empty"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:apply_PORT_value",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "value",
+        "process": "mapInc:apply"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:first_PORT_value",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "value",
+        "process": "mapInc:first"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:prep_PORT_value",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "value",
+        "process": "mapInc:prep"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:apply_PORT_result",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "result",
+        "process": "mapInc:apply"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:recMap_PORT_data",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "data",
+        "hierarchyBorder": true,
+        "process": "mapInc:recMap"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:rest_PORT_rest",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "rest",
+        "process": "mapInc:rest"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:join_PORT_in2",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "in2",
+        "process": "mapInc:join"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:prep_PORT_result",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "result",
+        "process": "mapInc:prep"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:prep_PORT_array",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "array",
+        "process": "mapInc:prep"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:recMap_PORT_result",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "result",
+        "hierarchyBorder": true,
+        "process": "mapInc:recMap"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:join_PORT_to",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "to",
+        "process": "mapInc:join"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:recMap:join_PORT_in1",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "in1",
+        "process": "mapInc:recMap:join"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap:term_PORT_outTrue",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "outTrue",
+        "process": "mapInc:recMap:term"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap:term_PORT_control",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "control",
+        "process": "mapInc:recMap:term"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap:empty_PORT_isEmpty",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "isEmpty",
+        "process": "mapInc:recMap:empty"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap:apply_PORT_value",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "value",
+        "process": "mapInc:recMap:apply"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap:first_PORT_value",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "value",
+        "process": "mapInc:recMap:first"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap:prep_PORT_value",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "value",
+        "process": "mapInc:recMap:prep"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap:apply_PORT_result",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "result",
+        "process": "mapInc:recMap:apply"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap:recMap_PORT_data",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "data",
+        "process": "mapInc:recMap:recMap"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap:rest_PORT_rest",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "rest",
+        "process": "mapInc:recMap:rest"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap:join_PORT_in2",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "in2",
+        "process": "mapInc:recMap:join"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap:prep_PORT_result",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "result",
+        "process": "mapInc:recMap:prep"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap:prep_PORT_array",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "array",
+        "process": "mapInc:recMap:prep"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap:recMap_PORT_result",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "result",
+        "process": "mapInc:recMap:recMap"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap:join_PORT_to",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "to",
+        "process": "mapInc:recMap:join"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:term_PORT_input",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "input",
+        "process": "mapInc:term"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc_data_DUPLICATE_0_1_PORT_d1",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "d1",
+        "process": "mapInc_data_DUPLICATE_0_1"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:empty_PORT_array",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "array",
+        "process": "mapInc:empty"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc_data_DUPLICATE_0_1_PORT_d2",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "d2",
+        "process": "mapInc_data_DUPLICATE_0_1"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc_data_DUPLICATE_0_1_PORT_in",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "in",
+        "process": "mapInc_data_DUPLICATE_0_1"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:apply_PORT_fn",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "fn",
+        "process": "mapInc:apply"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc_fn_DUPLICATE_0_1_PORT_d1",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "d1",
+        "process": "mapInc_fn_DUPLICATE_0_1"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:recMap_PORT_fn",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "fn",
+        "hierarchyBorder": true,
+        "process": "mapInc:recMap"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc_fn_DUPLICATE_0_1_PORT_d2",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "d2",
+        "process": "mapInc_fn_DUPLICATE_0_1"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc_fn_DUPLICATE_0_1_PORT_in",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "in",
+        "process": "mapInc_fn_DUPLICATE_0_1"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:first_PORT_array",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "array",
+        "process": "mapInc:first"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:term_outFalse_DUPLICATE_0_1_PORT_d1",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "d1",
+        "process": "mapInc:term_outFalse_DUPLICATE_0_1"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:rest_PORT_array",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "array",
+        "process": "mapInc:rest"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:term_outFalse_DUPLICATE_0_1_PORT_d2",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "d2",
+        "process": "mapInc:term_outFalse_DUPLICATE_0_1"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:term_outFalse_DUPLICATE_0_1_PORT_in",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "in",
+        "process": "mapInc:term_outFalse_DUPLICATE_0_1"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:term_PORT_outFalse",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "outFalse",
+        "process": "mapInc:term"
+      },
+      "parent": "mapInc"
+    },
+    {
+      "v": "mapInc:recMap:term_PORT_input",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "input",
+        "process": "mapInc:recMap:term"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap_data_DUPLICATE_0_1_PORT_d1",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "d1",
+        "process": "mapInc:recMap_data_DUPLICATE_0_1"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap:empty_PORT_array",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "array",
+        "process": "mapInc:recMap:empty"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap_data_DUPLICATE_0_1_PORT_d2",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "d2",
+        "process": "mapInc:recMap_data_DUPLICATE_0_1"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap_data_DUPLICATE_0_1_PORT_in",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "in",
+        "process": "mapInc:recMap_data_DUPLICATE_0_1"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap:apply_PORT_fn",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "fn",
+        "process": "mapInc:recMap:apply"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap_fn_DUPLICATE_0_1_PORT_d1",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "d1",
+        "process": "mapInc:recMap_fn_DUPLICATE_0_1"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap:recMap_PORT_fn",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "fn",
+        "process": "mapInc:recMap:recMap"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap_fn_DUPLICATE_0_1_PORT_d2",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "d2",
+        "process": "mapInc:recMap_fn_DUPLICATE_0_1"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap_fn_DUPLICATE_0_1_PORT_in",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "in",
+        "process": "mapInc:recMap_fn_DUPLICATE_0_1"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap:first_PORT_array",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "array",
+        "process": "mapInc:recMap:first"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap:term_outFalse_DUPLICATE_0_1_PORT_d1",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "d1",
+        "process": "mapInc:recMap:term_outFalse_DUPLICATE_0_1"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap:rest_PORT_array",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "array",
+        "process": "mapInc:recMap:rest"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap:term_outFalse_DUPLICATE_0_1_PORT_d2",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "d2",
+        "process": "mapInc:recMap:term_outFalse_DUPLICATE_0_1"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap:term_outFalse_DUPLICATE_0_1_PORT_in",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "in",
+        "process": "mapInc:recMap:term_outFalse_DUPLICATE_0_1"
+      },
+      "parent": "mapInc:recMap"
+    },
+    {
+      "v": "mapInc:recMap:term_PORT_outFalse",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "outFalse",
+        "process": "mapInc:recMap:term"
+      },
+      "parent": "mapInc:recMap"
+    }
+  ],
+  "edges": [
+    {
+      "v": "strToArr_PORT_input",
+      "w": "strToArr"
+    },
+    {
+      "v": "in",
+      "w": "in_PORT_output"
+    },
+    {
+      "v": "in_PORT_output",
+      "w": "strToArr_PORT_input"
+    },
+    {
+      "v": "strToArr",
+      "w": "strToArr_PORT_output"
+    },
+    {
+      "v": "strToArr_PORT_output",
+      "w": "mapInc_PORT_data"
+    },
+    {
+      "v": "lambda_inc",
+      "w": "lambda_inc_PORT_fn"
+    },
+    {
+      "v": "lambda_inc_PORT_fn",
+      "w": "mapInc_PORT_fn"
+    },
+    {
+      "v": "arrToStr_PORT_input",
+      "w": "arrToStr"
+    },
+    {
+      "v": "mapInc_PORT_result",
+      "w": "arrToStr_PORT_input"
+    },
+    {
+      "v": "out_PORT_input",
+      "w": "out"
+    },
+    {
+      "v": "arrToStr",
+      "w": "arrToStr_PORT_output"
+    },
+    {
+      "v": "arrToStr_PORT_output",
+      "w": "out_PORT_input"
+    },
+    {
+      "v": "inc_lambda:add_PORT_s1",
+      "w": "inc_lambda:add"
+    },
+    {
+      "v": "inc_lambda_PORT_i",
+      "w": "inc_lambda:add_PORT_s1"
+    },
+    {
+      "v": "inc_lambda:add_PORT_s2",
+      "w": "inc_lambda:add"
+    },
+    {
+      "v": "inc_lambda:c",
+      "w": "inc_lambda:c_PORT_output"
+    },
+    {
+      "v": "inc_lambda:c_PORT_output",
+      "w": "inc_lambda:add_PORT_s2"
+    },
+    {
+      "v": "inc_lambda:add",
+      "w": "inc_lambda:add_PORT_sum"
+    },
+    {
+      "v": "inc_lambda:add_PORT_sum",
+      "w": "inc_lambda_PORT_inc"
+    },
+    {
+      "v": "mapInc:join_PORT_in1",
+      "w": "mapInc:join"
+    },
+    {
+      "v": "mapInc:term",
+      "w": "mapInc:term_PORT_outTrue"
+    },
+    {
+      "v": "mapInc:term_PORT_outTrue",
+      "w": "mapInc:join_PORT_in1"
+    },
+    {
+      "v": "mapInc:term_PORT_control",
+      "w": "mapInc:term"
+    },
+    {
+      "v": "mapInc:empty",
+      "w": "mapInc:empty_PORT_isEmpty"
+    },
+    {
+      "v": "mapInc:empty_PORT_isEmpty",
+      "w": "mapInc:term_PORT_control"
+    },
+    {
+      "v": "mapInc:apply_PORT_value",
+      "w": "mapInc:apply"
+    },
+    {
+      "v": "mapInc:first",
+      "w": "mapInc:first_PORT_value"
+    },
+    {
+      "v": "mapInc:first_PORT_value",
+      "w": "mapInc:apply_PORT_value"
+    },
+    {
+      "v": "mapInc:prep_PORT_value",
+      "w": "mapInc:prep"
+    },
+    {
+      "v": "mapInc:apply",
+      "w": "mapInc:apply_PORT_result"
+    },
+    {
+      "v": "mapInc:apply_PORT_result",
+      "w": "mapInc:prep_PORT_value"
+    },
+    {
+      "v": "mapInc:rest",
+      "w": "mapInc:rest_PORT_rest"
+    },
+    {
+      "v": "mapInc:rest_PORT_rest",
+      "w": "mapInc:recMap_PORT_data"
+    },
+    {
+      "v": "mapInc:join_PORT_in2",
+      "w": "mapInc:join"
+    },
+    {
+      "v": "mapInc:prep",
+      "w": "mapInc:prep_PORT_result"
+    },
+    {
+      "v": "mapInc:prep_PORT_result",
+      "w": "mapInc:join_PORT_in2"
+    },
+    {
+      "v": "mapInc:prep_PORT_array",
+      "w": "mapInc:prep"
+    },
+    {
+      "v": "mapInc:recMap_PORT_result",
+      "w": "mapInc:prep_PORT_array"
+    },
+    {
+      "v": "mapInc:join",
+      "w": "mapInc:join_PORT_to"
+    },
+    {
+      "v": "mapInc:join_PORT_to",
+      "w": "mapInc_PORT_result"
+    },
+    {
+      "v": "mapInc:recMap:join_PORT_in1",
+      "w": "mapInc:recMap:join"
+    },
+    {
+      "v": "mapInc:recMap:term",
+      "w": "mapInc:recMap:term_PORT_outTrue"
+    },
+    {
+      "v": "mapInc:recMap:term_PORT_outTrue",
+      "w": "mapInc:recMap:join_PORT_in1"
+    },
+    {
+      "v": "mapInc:recMap:term_PORT_control",
+      "w": "mapInc:recMap:term"
+    },
+    {
+      "v": "mapInc:recMap:empty",
+      "w": "mapInc:recMap:empty_PORT_isEmpty"
+    },
+    {
+      "v": "mapInc:recMap:empty_PORT_isEmpty",
+      "w": "mapInc:recMap:term_PORT_control"
+    },
+    {
+      "v": "mapInc:recMap:apply_PORT_value",
+      "w": "mapInc:recMap:apply"
+    },
+    {
+      "v": "mapInc:recMap:first",
+      "w": "mapInc:recMap:first_PORT_value"
+    },
+    {
+      "v": "mapInc:recMap:first_PORT_value",
+      "w": "mapInc:recMap:apply_PORT_value"
+    },
+    {
+      "v": "mapInc:recMap:prep_PORT_value",
+      "w": "mapInc:recMap:prep"
+    },
+    {
+      "v": "mapInc:recMap:apply",
+      "w": "mapInc:recMap:apply_PORT_result"
+    },
+    {
+      "v": "mapInc:recMap:apply_PORT_result",
+      "w": "mapInc:recMap:prep_PORT_value"
+    },
+    {
+      "v": "mapInc:recMap:recMap_PORT_data",
+      "w": "mapInc:recMap:recMap"
+    },
+    {
+      "v": "mapInc:recMap:rest",
+      "w": "mapInc:recMap:rest_PORT_rest"
+    },
+    {
+      "v": "mapInc:recMap:rest_PORT_rest",
+      "w": "mapInc:recMap:recMap_PORT_data"
+    },
+    {
+      "v": "mapInc:recMap:join_PORT_in2",
+      "w": "mapInc:recMap:join"
+    },
+    {
+      "v": "mapInc:recMap:prep",
+      "w": "mapInc:recMap:prep_PORT_result"
+    },
+    {
+      "v": "mapInc:recMap:prep_PORT_result",
+      "w": "mapInc:recMap:join_PORT_in2"
+    },
+    {
+      "v": "mapInc:recMap:prep_PORT_array",
+      "w": "mapInc:recMap:prep"
+    },
+    {
+      "v": "mapInc:recMap:recMap",
+      "w": "mapInc:recMap:recMap_PORT_result"
+    },
+    {
+      "v": "mapInc:recMap:recMap_PORT_result",
+      "w": "mapInc:recMap:prep_PORT_array"
+    },
+    {
+      "v": "mapInc:recMap:join",
+      "w": "mapInc:recMap:join_PORT_to"
+    },
+    {
+      "v": "mapInc:recMap:join_PORT_to",
+      "w": "mapInc:recMap_PORT_result"
+    },
+    {
+      "v": "mapInc:term_PORT_input",
+      "w": "mapInc:term"
+    },
+    {
+      "v": "mapInc_data_DUPLICATE_0_1",
+      "w": "mapInc_data_DUPLICATE_0_1_PORT_d1"
+    },
+    {
+      "v": "mapInc_data_DUPLICATE_0_1_PORT_d1",
+      "w": "mapInc:term_PORT_input"
+    },
+    {
+      "v": "mapInc:empty_PORT_array",
+      "w": "mapInc:empty"
+    },
+    {
+      "v": "mapInc_data_DUPLICATE_0_1",
+      "w": "mapInc_data_DUPLICATE_0_1_PORT_d2"
+    },
+    {
+      "v": "mapInc_data_DUPLICATE_0_1_PORT_d2",
+      "w": "mapInc:empty_PORT_array"
+    },
+    {
+      "v": "mapInc_data_DUPLICATE_0_1_PORT_in",
+      "w": "mapInc_data_DUPLICATE_0_1"
+    },
+    {
+      "v": "mapInc_PORT_data",
+      "w": "mapInc_data_DUPLICATE_0_1_PORT_in"
+    },
+    {
+      "v": "mapInc:apply_PORT_fn",
+      "w": "mapInc:apply"
+    },
+    {
+      "v": "mapInc_fn_DUPLICATE_0_1",
+      "w": "mapInc_fn_DUPLICATE_0_1_PORT_d1"
+    },
+    {
+      "v": "mapInc_fn_DUPLICATE_0_1_PORT_d1",
+      "w": "mapInc:apply_PORT_fn"
+    },
+    {
+      "v": "mapInc_fn_DUPLICATE_0_1",
+      "w": "mapInc_fn_DUPLICATE_0_1_PORT_d2"
+    },
+    {
+      "v": "mapInc_fn_DUPLICATE_0_1_PORT_d2",
+      "w": "mapInc:recMap_PORT_fn"
+    },
+    {
+      "v": "mapInc_fn_DUPLICATE_0_1_PORT_in",
+      "w": "mapInc_fn_DUPLICATE_0_1"
+    },
+    {
+      "v": "mapInc_PORT_fn",
+      "w": "mapInc_fn_DUPLICATE_0_1_PORT_in"
+    },
+    {
+      "v": "mapInc:first_PORT_array",
+      "w": "mapInc:first"
+    },
+    {
+      "v": "mapInc:term_outFalse_DUPLICATE_0_1",
+      "w": "mapInc:term_outFalse_DUPLICATE_0_1_PORT_d1"
+    },
+    {
+      "v": "mapInc:term_outFalse_DUPLICATE_0_1_PORT_d1",
+      "w": "mapInc:first_PORT_array"
+    },
+    {
+      "v": "mapInc:rest_PORT_array",
+      "w": "mapInc:rest"
+    },
+    {
+      "v": "mapInc:term_outFalse_DUPLICATE_0_1",
+      "w": "mapInc:term_outFalse_DUPLICATE_0_1_PORT_d2"
+    },
+    {
+      "v": "mapInc:term_outFalse_DUPLICATE_0_1_PORT_d2",
+      "w": "mapInc:rest_PORT_array"
+    },
+    {
+      "v": "mapInc:term_outFalse_DUPLICATE_0_1_PORT_in",
+      "w": "mapInc:term_outFalse_DUPLICATE_0_1"
+    },
+    {
+      "v": "mapInc:term",
+      "w": "mapInc:term_PORT_outFalse"
+    },
+    {
+      "v": "mapInc:term_PORT_outFalse",
+      "w": "mapInc:term_outFalse_DUPLICATE_0_1_PORT_in"
+    },
+    {
+      "v": "mapInc:recMap:term_PORT_input",
+      "w": "mapInc:recMap:term"
+    },
+    {
+      "v": "mapInc:recMap_data_DUPLICATE_0_1",
+      "w": "mapInc:recMap_data_DUPLICATE_0_1_PORT_d1"
+    },
+    {
+      "v": "mapInc:recMap_data_DUPLICATE_0_1_PORT_d1",
+      "w": "mapInc:recMap:term_PORT_input"
+    },
+    {
+      "v": "mapInc:recMap:empty_PORT_array",
+      "w": "mapInc:recMap:empty"
+    },
+    {
+      "v": "mapInc:recMap_data_DUPLICATE_0_1",
+      "w": "mapInc:recMap_data_DUPLICATE_0_1_PORT_d2"
+    },
+    {
+      "v": "mapInc:recMap_data_DUPLICATE_0_1_PORT_d2",
+      "w": "mapInc:recMap:empty_PORT_array"
+    },
+    {
+      "v": "mapInc:recMap_data_DUPLICATE_0_1_PORT_in",
+      "w": "mapInc:recMap_data_DUPLICATE_0_1"
+    },
+    {
+      "v": "mapInc:recMap_PORT_data",
+      "w": "mapInc:recMap_data_DUPLICATE_0_1_PORT_in"
+    },
+    {
+      "v": "mapInc:recMap:apply_PORT_fn",
+      "w": "mapInc:recMap:apply"
+    },
+    {
+      "v": "mapInc:recMap_fn_DUPLICATE_0_1",
+      "w": "mapInc:recMap_fn_DUPLICATE_0_1_PORT_d1"
+    },
+    {
+      "v": "mapInc:recMap_fn_DUPLICATE_0_1_PORT_d1",
+      "w": "mapInc:recMap:apply_PORT_fn"
+    },
+    {
+      "v": "mapInc:recMap:recMap_PORT_fn",
+      "w": "mapInc:recMap:recMap"
+    },
+    {
+      "v": "mapInc:recMap_fn_DUPLICATE_0_1",
+      "w": "mapInc:recMap_fn_DUPLICATE_0_1_PORT_d2"
+    },
+    {
+      "v": "mapInc:recMap_fn_DUPLICATE_0_1_PORT_d2",
+      "w": "mapInc:recMap:recMap_PORT_fn"
+    },
+    {
+      "v": "mapInc:recMap_fn_DUPLICATE_0_1_PORT_in",
+      "w": "mapInc:recMap_fn_DUPLICATE_0_1"
+    },
+    {
+      "v": "mapInc:recMap_PORT_fn",
+      "w": "mapInc:recMap_fn_DUPLICATE_0_1_PORT_in"
+    },
+    {
+      "v": "mapInc:recMap:first_PORT_array",
+      "w": "mapInc:recMap:first"
+    },
+    {
+      "v": "mapInc:recMap:term_outFalse_DUPLICATE_0_1",
+      "w": "mapInc:recMap:term_outFalse_DUPLICATE_0_1_PORT_d1"
+    },
+    {
+      "v": "mapInc:recMap:term_outFalse_DUPLICATE_0_1_PORT_d1",
+      "w": "mapInc:recMap:first_PORT_array"
+    },
+    {
+      "v": "mapInc:recMap:rest_PORT_array",
+      "w": "mapInc:recMap:rest"
+    },
+    {
+      "v": "mapInc:recMap:term_outFalse_DUPLICATE_0_1",
+      "w": "mapInc:recMap:term_outFalse_DUPLICATE_0_1_PORT_d2"
+    },
+    {
+      "v": "mapInc:recMap:term_outFalse_DUPLICATE_0_1_PORT_d2",
+      "w": "mapInc:recMap:rest_PORT_array"
+    },
+    {
+      "v": "mapInc:recMap:term_outFalse_DUPLICATE_0_1_PORT_in",
+      "w": "mapInc:recMap:term_outFalse_DUPLICATE_0_1"
+    },
+    {
+      "v": "mapInc:recMap:term",
+      "w": "mapInc:recMap:term_PORT_outFalse"
+    },
+    {
+      "v": "mapInc:recMap:term_PORT_outFalse",
+      "w": "mapInc:recMap:term_outFalse_DUPLICATE_0_1_PORT_in"
+    }
+  ]
+}
