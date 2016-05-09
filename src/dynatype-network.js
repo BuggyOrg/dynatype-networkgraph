@@ -135,9 +135,10 @@ export function replaceGenerics (graph) {
   for (var j = 0; j < nodes.length; j++) {
     var paths = replaceGenericInput(graph, nodes[j])
     // var types = ''
-    for (var i = 0; i < paths.length; i++) {
-      var currentPath = paths[i]
-      var path = currentPath
+    var pathsToReplace = []
+    for (let i = 0; i < paths.length; i++) {
+      var currentPath = _.filter(paths[i], (node) => node.port !== null)
+      // var path = currentPath
       var type = processGraph.node(currentPath[0].node).outputPorts[currentPath[0].port] ||
         processGraph.node(currentPath[0].node).inputPorts[currentPath[0].port]
       /* if (types === '') {
@@ -146,21 +147,50 @@ export function replaceGenerics (graph) {
         var error = 'Type mismatch: Two pathes ending in node ' + currentPath[currentPath.length - 1].node + ' have different types: ' + types + ' and ' + type
         throw new Error(error)
       }*/
-      for (var k = 1; k < path.length; k++) {
-        var genInput = genericInputs(processGraph, path[k].node)
-        for (var l = 0; l < genInput.length; l++) {
-          processGraph.node(path[k].node).inputPorts[genInput[l]] =
-            replaceGeneric(processGraph.node(path[k].node).inputPorts[genInput[l]], type)
-        }
-        var genOutput = genericOutputs(processGraph, path[k].node)
-        for (var m = 0; m < genOutput.length; m++) {
-          processGraph.node(path[k].node).outputPorts[genOutput[m]] =
-            replaceGeneric(processGraph.node(path[k].node).outputPorts[genOutput[m]], type)
+      if (type === 'generic') {
+        pathsToReplace = pathsToReplace.concat([currentPath])
+      } else {
+        var validType = type
+        replacePathGenerics(processGraph, currentPath, type)
+      }
+    }
+    console.log('pathsToReplace', pathsToReplace)
+    if (validType === undefined && pathsToReplace.length !== 0) {
+      var secondInputs = processGraph.node(nodes[j]).inputPorts
+      var keys = Object.keys(secondInputs)
+      for (let i = 0; i < keys.length; i++) {
+        if (secondInputs[keys[i]] !== 'generic') {
+          validType = secondInputs[keys[i]]
         }
       }
     }
+    if (validType === undefined && pathsToReplace.length !== 0) {
+      // TODO
+    }
+    for (let p = 0; p < pathsToReplace.length; p++) {
+      replacePathGenerics(processGraph, pathsToReplace[p], validType, pathsToReplace[p][0].port)
+    }
   }
   return processGraph
+}
+
+function replacePathGenerics (graph, path, type, firstPort) {
+  for (var k = 1; k < path.length; k++) {
+    var genInput = genericInputs(graph, path[k].node)
+    for (var l = 0; l < genInput.length; l++) {
+      graph.node(path[k].node).inputPorts[genInput[l]] =
+        replaceGeneric(graph.node(path[k].node).inputPorts[genInput[l]], type)
+    }
+    var genOutput = genericOutputs(graph, path[k].node)
+    for (var m = 0; m < genOutput.length; m++) {
+      graph.node(path[k].node).outputPorts[genOutput[m]] =
+        replaceGeneric(graph.node(path[k].node).outputPorts[genOutput[m]], type)
+    }
+  }
+  if (firstPort !== undefined) {
+    graph.node(path[0].node).outputPorts[firstPort] =
+      replaceGeneric(graph.node(path[0].node).outputPorts[firstPort], type)
+  }
 }
 
 export function addTypeConversion (processGraph, convertGraph) {

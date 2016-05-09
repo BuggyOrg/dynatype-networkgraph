@@ -13,6 +13,9 @@ var inc_generic = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/in
 var type_error = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/type_error.json')))
 var facGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/fac.json')))
 var fac2Graph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/fac2.json')))
+var secondInput = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/secondInput.graphlib')))
+var secondInput2 = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/secondInput2.graphlib')))
+var walkForward = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/walkForward.graphlib')))
 
 convertGraph.setNode('int', 'int')
 convertGraph.setNode('string', 'string')
@@ -119,5 +122,29 @@ describe('Dynamic type network graph', function () {
     var mapGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/map.json')))
     var path = dtypenet.replaceGenericInput(mapGraph, 'mapInc')
     expect(path).to.have.length(2)
+  })
+
+  it('backtracks second path if first contains just generics', () => {
+    var g = dtypenet.replaceGenerics(secondInput)
+    var curGraph = grlib.json.write(g)
+    fs.writeFileSync('test/fixtures/secondInput_result.graphlib', JSON.stringify(grlib.json.write(g), null, 2))
+    var testgraph = JSON.parse(fs.readFileSync('test/fixtures/secondInput_result.graphlib', 'utf8'))
+    expect(curGraph).to.deep.equal(testgraph)
+  })
+
+  it('takes type of second input if first path contains just generics', () => {
+    var g = dtypenet.replaceGenerics(secondInput2)
+    var curGraph = grlib.json.write(g)
+    fs.writeFileSync('test/fixtures/secondInput2_result.graphlib', JSON.stringify(grlib.json.write(g), null, 2))
+    var testgraph = JSON.parse(fs.readFileSync('test/fixtures/secondInput2_result.graphlib', 'utf8'))
+    expect(curGraph).to.deep.equal(testgraph)
+  })
+
+  it('walks forward if backtrack contains just generics', () => {
+    var g = dtypenet.replaceGenerics(walkForward)
+    var curGraph = grlib.json.write(g)
+    fs.writeFileSync('test/fixtures/walkForward_result.graphlib', JSON.stringify(grlib.json.write(g), null, 2))
+    var testgraph = JSON.parse(fs.readFileSync('test/fixtures/walkForward_result.graphlib', 'utf8'))
+    expect(curGraph).to.deep.equal(testgraph)
   })
 })
