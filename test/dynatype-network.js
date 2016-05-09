@@ -118,17 +118,17 @@ describe('Dynamic type network graph', function () {
     expect(path).to.have.length(1)
   })
 
-  /* it('can deduce all array types in recursive map', () => {
+  it('can backtrack compound inputs', () => {
     var mapGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/map_recursive.json')))
     var path = dtypenet.replaceGenericInput(mapGraph, 'mapInc')
-    console.log(path)
     expect(path).to.have.length(2)
-  })*/
+    expect(path[0]).to.have.length(2)
+  })
 
-  it('can backtrack compound inputs', () => {
-    var mapGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/map.json')))
-    var path = dtypenet.replaceGenericInput(mapGraph, 'mapInc')
-    expect(path).to.have.length(2)
+  it('can deduce all array types in recursive map', () => {
+    var mapGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/map_recursive.json')))
+    var typedGraph = dtypenet.replaceGenerics(mapGraph)
+    expect(typedGraph.node('mapInc:first').inputPorts['array']).to.equal('[int64]')
   })
 
   it('backtracks second path if first contains just generics', () => {

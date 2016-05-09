@@ -83,8 +83,10 @@ function genericInputPorts (graph, node, port) {
   var curNode = graph.node(node)
   if (curNode.inputPorts[port]) {
     return _.filter(genericInputs(graph, node), (follow) => follow === port)
-  } else {
+  } else if (!curNode.atomic) {
     return _.filter(genericOutputs(graph, node), (follow) => follow === port)
+  } else {
+    return genericInputs(graph, node)
   }
 }
 
@@ -143,7 +145,9 @@ export function replaceGenericInput (graph, node) {
     ports = _.merge({}, curNode.inputPorts, curNode.outputPorts)
   }
   return _.filter(_.flatten(_.map(ports, (type, port) =>
-    graphtools.walk.walkBack(graph, {node, port}, followGenerics, {keepPorts: true})))
+    _.map(graphtools.walk.walkBack(graph, {node, port}, followGenerics, {keepPorts: true}),
+        (path) =>
+          _.reject(path, (n) => n.port === null))))
     , (list) => list.length > 1)
 }
 
@@ -168,8 +172,7 @@ export function replaceGenerics (graph) {
     // var types = ''
     var pathsToReplace = []
     for (let i = 0; i < paths.length; i++) {
-      var currentPath = _.filter(paths[i], (node) => node.port !== null)
-      // var path = currentPath
+      var currentPath = paths[i]
       var type = processGraph.node(currentPath[0].node).outputPorts[currentPath[0].port] ||
         processGraph.node(currentPath[0].node).inputPorts[currentPath[0].port]
       /* if (types === '') {
@@ -185,7 +188,6 @@ export function replaceGenerics (graph) {
         replacePathGenerics(processGraph, currentPath, type)
       }
     }
-    // console.log('pathsToReplace', pathsToReplace)
     if (validType === undefined && pathsToReplace.length !== 0) {
       var secondInputs = processGraph.node(nodes[j]).inputPorts
       var keys = Object.keys(secondInputs)
