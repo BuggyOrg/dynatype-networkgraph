@@ -225,16 +225,19 @@ function replacePathGenerics (graph, path, type, firstPort) {
   for (var k = 1; k < path.length; k++) {
     var genInput = genericInputs(graph, path[k].node)
     for (var l = 0; l < genInput.length; l++) {
+      graph.node(path[k].node).generic = true
       graph.node(path[k].node).inputPorts[genInput[l]] =
         replaceGeneric(graph.node(path[k].node).inputPorts[genInput[l]], type)
     }
     var genOutput = genericOutputs(graph, path[k].node)
     for (var m = 0; m < genOutput.length; m++) {
+      graph.node(path[k].node).generic = true
       graph.node(path[k].node).outputPorts[genOutput[m]] =
         replaceGeneric(graph.node(path[k].node).outputPorts[genOutput[m]], type)
     }
   }
   if (firstPort !== undefined) {
+    graph.node(path[k].node).generic = true
     graph.node(path[0].node).outputPorts[firstPort] =
       replaceGeneric(graph.node(path[0].node).outputPorts[firstPort], type)
   }
