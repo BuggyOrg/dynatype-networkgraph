@@ -19,7 +19,8 @@
         "branchPath": "out",
         "branch": "out",
         "name": "out",
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true
       }
     },
     {
@@ -116,7 +117,8 @@
         "branchPath": "inc",
         "branch": "inc",
         "name": "inc",
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true
       }
     },
     {
@@ -143,7 +145,8 @@
         "parent": "inc",
         "branchPath": "inc:add",
         "branch": "add",
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true
       },
       "parent": "inc"
     },

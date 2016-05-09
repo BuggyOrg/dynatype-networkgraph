@@ -66,7 +66,7 @@ describe('Dynamic type network graph', function () {
     var g = dtypenet.replaceGenerics(fac2Graph)
     expect(dtypenet.isGenericFree(g)).to.be.true
     var curGraph = grlib.json.write(g)
-    // fs.writeFileSync('test/fixtures/facGraph.graphlib', JSON.stringify(grlib.json.write(g), null, 2))
+    // fs.writeFileSync('test/fixtures/fac2_corr.json', JSON.stringify(grlib.json.write(g), null, 2))
     var testgraph = JSON.parse(fs.readFileSync('test/fixtures/fac2_corr.json', 'utf8'))
     expect(curGraph).to.deep.equal(testgraph)
   })
@@ -132,8 +132,7 @@ describe('Dynamic type network graph', function () {
   it('can backtrack compound inputs', () => {
     var mapGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/map_recursive.json')))
     var path = dtypenet.replaceGenericInput(mapGraph, 'mapInc')
-    expect(path).to.have.length(2)
-    expect(path[0]).to.have.length(2)
+    expect(path).to.have.length(6)
   })
 
   it('can deduce all array types in recursive map', () => {
@@ -141,8 +140,15 @@ describe('Dynamic type network graph', function () {
     var typedGraph = dtypenet.replaceGenerics(mapGraph)
     expect(dtypenet.isGenericFree(typedGraph)).to.be.true
     expect(typedGraph.node('mapInc:first').inputPorts['array']).to.equal('[int64]')
+    expect(typedGraph.node('mapInc').inputPorts['data']).to.equal('[int64]')
+    expect(typedGraph.node('mapInc:empty').inputPorts['array']).to.equal('[int64]')
+    expect(typedGraph.node('mapInc:term').inputPorts['input']).to.equal('[int64]')
+    expect(typedGraph.node('mapInc:term').outputPorts['outFalse']).to.equal('[int64]')
+    expect(typedGraph.node('mapInc:rest').inputPorts['array']).to.equal('[int64]')
+    expect(typedGraph.node('mapInc:rest').outputPorts['rest']).to.equal('[int64]')
   })
 
+/*
   it('backtracks second path if first contains just generics', () => {
     var g = dtypenet.replaceGenerics(secondInput)
     expect(dtypenet.isGenericFree(g)).to.be.true
@@ -177,5 +183,5 @@ describe('Dynamic type network graph', function () {
     // fs.writeFileSync('test/fixtures/map_recursive2_result.graphlib', JSON.stringify(grlib.json.write(g), null, 2))
     var testgraph = JSON.parse(fs.readFileSync('test/fixtures/map_recursive2_result.graphlib', 'utf8'))
     expect(curGraph).to.deep.equal(testgraph)
-  })
+  })*/
 })

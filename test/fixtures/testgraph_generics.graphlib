@@ -42,6 +42,7 @@
       "value": {
         "nodeType": "process",
         "name": "DEMUX",
+        "generic": true,
         "id": "logic/demux",
         "inputPorts": {
           "input": "int",

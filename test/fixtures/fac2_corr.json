@@ -696,7 +696,8 @@
         "parent": "fac",
         "branchPath": "fac:is1",
         "branch": "is1",
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true
       },
       "parent": "fac"
     },
@@ -734,12 +735,12 @@
         "name": "DEMUX",
         "id": "logic/demux",
         "inputPorts": {
-          "control": "bool",
-          "input": "int64"
+          "input": "int64",
+          "control": "bool"
         },
         "outputPorts": {
-          "outFalse": "int64",
-          "outTrue": "int64"
+          "outTrue": "int64",
+          "outFalse": "int64"
         },
         "atomic": true,
         "version": "0.2.0",
@@ -755,7 +756,8 @@
         "parent": "fac",
         "branchPath": "fac:choose",
         "branch": "choose",
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true
       },
       "parent": "fac"
     },
@@ -1277,7 +1279,8 @@
         "parent": "fac:recFac",
         "branchPath": "fac:recFac:is1",
         "branch": "is1",
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true
       },
       "parent": "fac:recFac"
     },
@@ -1328,12 +1331,12 @@
         "name": "DEMUX",
         "id": "logic/demux",
         "inputPorts": {
-          "control": "bool",
-          "input": "int64"
+          "input": "int64",
+          "control": "bool"
         },
         "outputPorts": {
-          "outFalse": "int64",
-          "outTrue": "int64"
+          "outTrue": "int64",
+          "outFalse": "int64"
         },
         "atomic": true,
         "version": "0.2.0",
@@ -1362,7 +1365,8 @@
         "parent": "fac:recFac",
         "branchPath": "fac:recFac:choose",
         "branch": "choose",
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true
       },
       "parent": "fac:recFac"
     },
@@ -1699,7 +1703,8 @@
         },
         "atomic": true,
         "specialForm": true,
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true
       },
       "parent": "fac"
     },
@@ -1717,7 +1722,8 @@
         },
         "atomic": true,
         "specialForm": true,
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true
       },
       "parent": "fac:recFac"
     },
@@ -1734,7 +1740,8 @@
           "d2": "int64"
         },
         "atomic": true,
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true
       },
       "parent": "fac"
     },
@@ -1751,7 +1758,8 @@
           "d2": "int64"
         },
         "atomic": true,
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true
       },
       "parent": "fac"
     },
@@ -1768,7 +1776,8 @@
           "d2": "int64"
         },
         "atomic": true,
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true
       },
       "parent": "fac:recFac"
     },
@@ -1785,7 +1794,8 @@
           "d2": "int64"
         },
         "atomic": true,
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true
       },
       "parent": "fac:recFac"
     },
