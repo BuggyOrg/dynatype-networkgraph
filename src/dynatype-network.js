@@ -88,12 +88,30 @@ function genericInputPorts (graph, node, port) {
   }
 }
 
+function genericOutputPorts (graph, node, port) {
+  var curNode = graph.node(node)
+  if (curNode.outputPorts[port]) {
+    return _.filter(genericOutputs(graph, node), (follow) => follow === port)
+  } else {
+    return _.filter(genericInputs(graph, node), (follow) => follow === port)
+  }
+}
+
 function followGenerics (graph, node, port) {
   var curNode = graph.node(node)
   if (port && !isGeneric(curNode.inputPorts[port]) && !isGeneric(curNode.outputPorts[port])) {
     return []
   } else {
     return genericInputPorts(graph, node, port)
+  }
+}
+
+function followGenericsForward (graph, node, port) {
+  var curNode = graph.node(node)
+  if (port && !isGeneric(curNode.inputPorts[port]) && !isGeneric(curNode.outputPorts[port])) {
+    return []
+  } else {
+    return genericOutputPorts(graph, node, port)
   }
 }
 
@@ -129,6 +147,19 @@ export function replaceGenericInput (graph, node) {
     , (list) => list.length > 1)
 }
 
+export function replaceGenericOutput (graph, node) {
+  var curNode = graph.node(node)
+  var ports
+  if (curNode.atomic) {
+    ports = curNode.outputPorts
+  } else {
+    ports = _.merge({}, curNode.inputPorts, curNode.outputPorts)
+  }
+  return _.filter(_.flatten(_.map(ports, (type, port) =>
+    graphtools.walk.walk(graph, {node, port}, followGenericsForward, {keepPorts: true})))
+    , (list) => list.length > 1)
+}
+
 export function replaceGenerics (graph) {
   var processGraph = replaceTypeHints(graph)
   var nodes = processGraph.nodes()
@@ -154,7 +185,7 @@ export function replaceGenerics (graph) {
         replacePathGenerics(processGraph, currentPath, type)
       }
     }
-    console.log('pathsToReplace', pathsToReplace)
+    // console.log('pathsToReplace', pathsToReplace)
     if (validType === undefined && pathsToReplace.length !== 0) {
       var secondInputs = processGraph.node(nodes[j]).inputPorts
       var keys = Object.keys(secondInputs)
@@ -165,7 +196,21 @@ export function replaceGenerics (graph) {
       }
     }
     if (validType === undefined && pathsToReplace.length !== 0) {
-      // TODO
+      paths = replaceGenericOutput(graph, nodes[j])
+      for (let i = 0; i < paths.length; i++) {
+        currentPath = _.filter(paths[i], (node) => node.port !== null)
+        type = processGraph.node(currentPath[currentPath.length - 1].node).inputPorts[currentPath[currentPath.length - 1].port] ||
+            processGraph.node(currentPath[currentPath.length - 1].node).outputPorts[currentPath[currentPath.length - 1].port]
+        if (type === 'generic') {
+          pathsToReplace = pathsToReplace.concat([currentPath])
+        } else {
+          validType = type
+          replacePathGenerics(processGraph, currentPath, type)
+        }
+      }
+    }
+    if (validType === undefined && pathsToReplace.length !== 0) {
+      throw new Error('Generics could not be replaced: No type found.')
     }
     for (let p = 0; p < pathsToReplace.length; p++) {
       replacePathGenerics(processGraph, pathsToReplace[p], validType, pathsToReplace[p][0].port)

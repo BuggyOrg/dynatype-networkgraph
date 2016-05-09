@@ -68,7 +68,7 @@ describe('Dynamic type network graph', function () {
   it('Replaces generics correctly for nodes with generic input and no generic output', () => {
     var g = dtypenet.replaceGenerics(inc_generic)
     var curGraph = grlib.json.write(g)
-    fs.writeFileSync('test/fixtures/inc_withoutGeneric.graphlib', JSON.stringify(grlib.json.write(g), null, 2))
+    // fs.writeFileSync('test/fixtures/inc_withoutGeneric.graphlib', JSON.stringify(grlib.json.write(g), null, 2))
     var testgraph = JSON.parse(fs.readFileSync('test/fixtures/inc_withoutGeneric.graphlib', 'utf8'))
     expect(curGraph).to.deep.equal(testgraph)
   })
@@ -134,7 +134,7 @@ describe('Dynamic type network graph', function () {
   it('backtracks second path if first contains just generics', () => {
     var g = dtypenet.replaceGenerics(secondInput)
     var curGraph = grlib.json.write(g)
-    fs.writeFileSync('test/fixtures/secondInput_result.graphlib', JSON.stringify(grlib.json.write(g), null, 2))
+    // fs.writeFileSync('test/fixtures/secondInput_result.graphlib', JSON.stringify(grlib.json.write(g), null, 2))
     var testgraph = JSON.parse(fs.readFileSync('test/fixtures/secondInput_result.graphlib', 'utf8'))
     expect(curGraph).to.deep.equal(testgraph)
   })
@@ -142,7 +142,7 @@ describe('Dynamic type network graph', function () {
   it('takes type of second input if first path contains just generics', () => {
     var g = dtypenet.replaceGenerics(secondInput2)
     var curGraph = grlib.json.write(g)
-    fs.writeFileSync('test/fixtures/secondInput2_result.graphlib', JSON.stringify(grlib.json.write(g), null, 2))
+    // fs.writeFileSync('test/fixtures/secondInput2_result.graphlib', JSON.stringify(grlib.json.write(g), null, 2))
     var testgraph = JSON.parse(fs.readFileSync('test/fixtures/secondInput2_result.graphlib', 'utf8'))
     expect(curGraph).to.deep.equal(testgraph)
   })
@@ -150,7 +150,7 @@ describe('Dynamic type network graph', function () {
   it('walks forward if backtrack contains just generics', () => {
     var g = dtypenet.replaceGenerics(walkForward)
     var curGraph = grlib.json.write(g)
-    fs.writeFileSync('test/fixtures/walkForward_result.graphlib', JSON.stringify(grlib.json.write(g), null, 2))
+    // fs.writeFileSync('test/fixtures/walkForward_result.graphlib', JSON.stringify(grlib.json.write(g), null, 2))
     var testgraph = JSON.parse(fs.readFileSync('test/fixtures/walkForward_result.graphlib', 'utf8'))
     expect(curGraph).to.deep.equal(testgraph)
   })

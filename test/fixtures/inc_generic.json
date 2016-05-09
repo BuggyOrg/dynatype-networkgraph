@@ -29,7 +29,7 @@
         "version": "0.2.0",
         "inputPorts": {},
         "outputPorts": {
-          "output": "int"
+          "output": "string"
         },
         "atomic": true,
         "path": [],
@@ -45,7 +45,7 @@
         "id": "math/inc",
         "version": "0.3.0",
         "inputPorts": {
-          "i": "int"
+          "i": "generic"
         },
         "outputPorts": {
           "inc": "int"
@@ -57,8 +57,8 @@
               "id": "math/add",
               "version": "0.1.1",
               "inputPorts": {
-                "s1": "generic",
-                "s2": "generic"
+                "s1": "int",
+                "s2": "int"
               },
               "outputPorts": {
                 "sum": "int"

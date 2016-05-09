@@ -17,7 +17,7 @@
         "version": "0.1.0",
         "inputPorts": {},
         "outputPorts": {
-          "const1": "generic"
+          "const1": "string"
         },
         "atomic": true
       },
@@ -31,7 +31,7 @@
         "version": "0.1.0",
         "inputPorts": {},
         "outputPorts": {
-          "const2": "generic"
+          "const2": "string"
         },
         "atomic": true
       },
@@ -44,12 +44,12 @@
         "name": "DEMUX",
         "id": "logic/demux",
         "inputPorts": {
-          "input": "generic",
-          "control": "generic"
+          "input": "string",
+          "control": "string"
         },
         "outputPorts": {
-          "outTrue": "generic",
-          "outFalse": "generic"
+          "outTrue": "string",
+          "outFalse": "string"
         },
         "atomic": true,
         "version": "0.1.0"
@@ -147,64 +147,6 @@
         "portName": "input"
       },
       "parent": "EXAMPLE1"
-    },
-    {
-      "v": "2_DEMUX_PORT_outTrue:3_STDOUT_PORT_input_1",
-      "value": {
-        "nodeType": "process",
-        "id": "translator/int_to_string",
-        "atomic": "true",
-        "inputPorts": {},
-        "outputPorts": {}
-      },
-      "parent": "EXAMPLE1"
-    },
-    {
-      "v": "2_DEMUX_PORT_outTrue:3_STDOUT_PORT_input_1_PORT_in",
-      "value": {
-        "nodeType": "inPort",
-        "portName": "input",
-        "isTrans": true
-      },
-      "parent": "EXAMPLE1"
-    },
-    {
-      "v": "2_DEMUX_PORT_outTrue:3_STDOUT_PORT_input_1_PORT_out",
-      "value": {
-        "nodeType": "outPort",
-        "portName": "output",
-        "isTrans": true
-      },
-      "parent": "EXAMPLE1"
-    },
-    {
-      "v": "2_DEMUX_PORT_outFalse:4_STDOUT_PORT_input_1",
-      "value": {
-        "nodeType": "process",
-        "id": "translator/int_to_string",
-        "atomic": "true",
-        "inputPorts": {},
-        "outputPorts": {}
-      },
-      "parent": "EXAMPLE1"
-    },
-    {
-      "v": "2_DEMUX_PORT_outFalse:4_STDOUT_PORT_input_1_PORT_in",
-      "value": {
-        "nodeType": "inPort",
-        "portName": "input",
-        "isTrans": true
-      },
-      "parent": "EXAMPLE1"
-    },
-    {
-      "v": "2_DEMUX_PORT_outFalse:4_STDOUT_PORT_input_1_PORT_out",
-      "value": {
-        "nodeType": "outPort",
-        "portName": "output",
-        "isTrans": true
-      },
-      "parent": "EXAMPLE1"
     }
   ],
   "edges": [
@@ -249,35 +191,11 @@
       "w": "4_STDOUT"
     },
     {
-      "v": "2_DEMUX_PORT_outTrue:3_STDOUT_PORT_input_1_PORT_in",
-      "w": "2_DEMUX_PORT_outTrue:3_STDOUT_PORT_input_1"
-    },
-    {
-      "v": "2_DEMUX_PORT_outTrue:3_STDOUT_PORT_input_1",
-      "w": "2_DEMUX_PORT_outTrue:3_STDOUT_PORT_input_1_PORT_out"
-    },
-    {
       "v": "2_DEMUX_PORT_outTrue",
-      "w": "2_DEMUX_PORT_outTrue:3_STDOUT_PORT_input_1_PORT_in"
-    },
-    {
-      "v": "2_DEMUX_PORT_outTrue:3_STDOUT_PORT_input_1_PORT_out",
       "w": "3_STDOUT_PORT_input"
     },
     {
-      "v": "2_DEMUX_PORT_outFalse:4_STDOUT_PORT_input_1_PORT_in",
-      "w": "2_DEMUX_PORT_outFalse:4_STDOUT_PORT_input_1"
-    },
-    {
-      "v": "2_DEMUX_PORT_outFalse:4_STDOUT_PORT_input_1",
-      "w": "2_DEMUX_PORT_outFalse:4_STDOUT_PORT_input_1_PORT_out"
-    },
-    {
       "v": "2_DEMUX_PORT_outFalse",
-      "w": "2_DEMUX_PORT_outFalse:4_STDOUT_PORT_input_1_PORT_in"
-    },
-    {
-      "v": "2_DEMUX_PORT_outFalse:4_STDOUT_PORT_input_1_PORT_out",
       "w": "4_STDOUT_PORT_input"
     }
   ]
