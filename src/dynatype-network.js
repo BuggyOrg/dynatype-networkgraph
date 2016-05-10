@@ -352,20 +352,20 @@ export function addTypeConversion (processGraph, convertGraph) {
 export function isGenericFree (graph) {
   var nodes = graph.nodes()
   for (let i = 0; i < nodes.length; i++) {
-    var inp = nodes[i].inputPorts
+    var inp = graph.node(nodes[i]).inputPorts
     if (inp !== undefined) {
       var inpKeys = Object.keys(inp)
       for (let j = 0; j < inpKeys.length; j++) {
-        if (inp[inpKeys[j]] === 'generic') {
+        if (isGeneric(inp[inpKeys[j]])) {
           return false
         }
       }
     }
-    var outp = nodes[i].outputPorts
+    var outp = graph.node(nodes[i]).outputPorts
     if (outp !== undefined) {
       var outpKeys = Object.keys(outp)
       for (let j = 0; j < outpKeys.length; j++) {
-        if (outp[outpKeys[j]] === 'generic') {
+        if (isGeneric(outp[outpKeys[j]])) {
           return false
         }
       }
