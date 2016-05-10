@@ -1,0 +1,104 @@
+{
+  "options": {
+    "directed": true,
+    "multigraph": false,
+    "compound": true
+  },
+  "nodes": [
+    {
+      "v": "0_STDIN",
+      "value": {
+        "id": "io/stdin",
+        "version": "0.1.0",
+        "inputPorts": {},
+        "outputPorts": {
+          "output": "[int]"
+        },
+        "atomic": true,
+        "nodeType": "process"
+      }
+    },
+    {
+      "v": "1_INC",
+      "value": {
+        "id": "math/inc",
+        "version": "0.1.0",
+        "inputPorts": {
+          "i": "[generic]"
+        },
+        "outputPorts": {
+          "inc": "generic"
+        },
+        "atomic": true,
+        "nodeType": "process"
+      }
+    },
+    {
+      "v": "2_STDOUT",
+      "value": {
+        "id": "io/stdout",
+        "version": "0.1.0",
+        "inputPorts": {
+          "input": "generic"
+        },
+        "outputPorts": {},
+        "atomic": true,
+        "nodeType": "process"
+      }
+    },
+    {
+      "v": "1_INC_PORT_i",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "i"
+      }
+    },
+    {
+      "v": "0_STDIN_PORT_output",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "output"
+      }
+    },
+    {
+      "v": "2_STDOUT_PORT_input",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "input"
+      }
+    },
+    {
+      "v": "1_INC_PORT_inc",
+      "value": {
+        "nodeType": "outPort",
+        "portName": "inc"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "v": "0_STDIN",
+      "w": "0_STDIN_PORT_output"
+    },
+    {
+      "v": "0_STDIN_PORT_output",
+      "w": "1_INC_PORT_i"
+    },
+    {
+      "v": "1_INC_PORT_i",
+      "w": "1_INC"
+    },
+    {
+      "v": "1_INC",
+      "w": "1_INC_PORT_inc"
+    },
+    {
+      "v": "1_INC_PORT_inc",
+      "w": "2_STDOUT_PORT_input"
+    },
+    {
+      "v": "2_STDOUT_PORT_input",
+      "w": "2_STDOUT"
+    }
+  ]
+}

@@ -25,6 +25,22 @@ convertGraph.setEdge('int', 'string', {from: 'int', to: 'string'})
 convertGraph.setEdge('string', 'int', {from: 'string', to: 'int'})
 
 describe('Dynamic type network graph', function () {
+  it('replaces a normal generic type with a basic type', () => {
+    var newType = dtypenet.replaceGeneric('generic', 'number')
+    expect(newType).to.equal('number')
+  })
+
+  it('replaces a normal generic type with an array type', () => {
+    var newType = dtypenet.replaceGeneric('generic', '[string]')
+    expect(newType).to.equal('[string]')
+  })
+
+  /* unclear ;)
+  it('replaces an array generic type with an array type', () => {
+    var newType = dtypenet.replaceGeneric('[generic]', '[string]')
+    expect(newType).to.equal('[string]')
+  })*/
+
   it('Creates a processgraph with correct translator nodes', function () {
     var d = dtypenet.addTypeConversion(processGraph, convertGraph)
     var curGraph = grlib.json.write(d)
@@ -96,7 +112,7 @@ describe('Dynamic type network graph', function () {
     expect(dtypenet.isGenericFree(genGraph)).to.be.true
     expect(genGraph.node('out').inputPorts['input']).to.equal('[string]')
   })
-  it('Can handle pack and unpacking arrays', () => {
+/*  it('Can handle pack and unpacking arrays', () => {
     var arrGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/unpack.json')))
     var genGraph = dtypenet.replaceGenerics(arrGraph)
     expect(dtypenet.isGenericFree(genGraph)).to.be.true
@@ -107,12 +123,12 @@ describe('Dynamic type network graph', function () {
     expect(genGraph.node('strToArr').outputPorts['output']).to.equal('[int64]')
     expect(genGraph.node('arrToStr').inputPorts['input']).to.equal('[int64]')
   })
-/*
+
   it('Throws an error if there is a type mismatch', () => {
     expect(() => dtypenet.replaceGenerics(type_error)).to.throw(Error)
   })
 */
-  it('Can process the map example correctly', () => {
+  it.only('Can process the map example correctly', () => {
     var mapGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/map.json')))
     var genGraph = dtypenet.replaceGenerics(mapGraph)
     expect(dtypenet.isGenericFree(genGraph)).to.be.true
@@ -146,6 +162,32 @@ describe('Dynamic type network graph', function () {
     expect(typedGraph.node('mapInc:term').outputPorts['outFalse']).to.equal('[int64]')
     expect(typedGraph.node('mapInc:rest').inputPorts['array']).to.equal('[int64]')
     expect(typedGraph.node('mapInc:rest').outputPorts['rest']).to.equal('[int64]')
+  })
+
+  it('keeps the array type in a generic -> generic atomic', () => {
+    var ggGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/g->g_path.json')))
+    var typedGraph = dtypenet.replaceGenerics(ggGraph)
+    expect(dtypenet.isGenericFree(typedGraph)).to.be.true
+    expect(typedGraph.node('1_INC').inputPorts['i']).to.equal('[int]')
+    expect(typedGraph.node('1_INC').outputPorts['inc']).to.equal('[int]')
+  })
+
+  it('extracts the array type in an array -> generic atomic', () => {
+    var agGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/a->g_path.json')))
+    var typedGraph = dtypenet.replaceGenerics(agGraph)
+    expect(dtypenet.isGenericFree(typedGraph)).to.be.true
+    expect(typedGraph.node('1_INC').inputPorts['i']).to.equal('[int]')
+    expect(typedGraph.node('1_INC').outputPorts['inc']).to.equal('int')
+    expect(typedGraph.node('2_STDOUT').inputPorts['input']).to.equal('int')
+  })
+
+  it('packs the array type in an generic -> array atomic', () => {
+    var gaGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/g->a_path.json')))
+    var typedGraph = dtypenet.replaceGenerics(gaGraph)
+    expect(dtypenet.isGenericFree(typedGraph)).to.be.true
+    expect(typedGraph.node('1_INC').inputPorts['i']).to.equal('int')
+    expect(typedGraph.node('1_INC').outputPorts['inc']).to.equal('[int]')
+    expect(typedGraph.node('2_STDOUT').inputPorts['input']).to.equal('[int]')
   })
 
 /*

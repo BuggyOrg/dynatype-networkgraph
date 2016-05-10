@@ -33,8 +33,7 @@ function getInputs (graph, nodeId) {
 }
 
 var replaceAll = (str, search, replacement) => {
-  // improve replacement!!
-  var repl = replacement.replace(/\[/g, '').replace(/\]/g, '')
+  var repl = replacement
   return str.split(search).join(repl)
 }
 
@@ -42,7 +41,7 @@ function isGeneric (name) {
   return name === 'generic' || name === '[generic]' || name === 'function'
 }
 
-function replaceGeneric (what, replacement) {
+export function replaceGeneric (what, replacement) {
   if (what === 'function' && typeof (replacement) === 'object') {
     return replacement
   } else if (what !== 'function' && typeof (replacement) === 'string') {
@@ -51,6 +50,23 @@ function replaceGeneric (what, replacement) {
     return what
   }
 }
+
+function entangleType (type, template) {
+  if (template[0] === '[' && template[template.length - 1] === ']') {
+    return type.replace(/\[/g, '').replace(/\]/g, '')
+  } else {
+    return type
+  }
+}
+
+function tangleType (type, template) {
+  if (template[0] === '[' && template[template.length - 1] === ']') {
+    return '[' + type + ']'
+  } else {
+    return type
+  }
+}
+
 function genericInputs (graph, node) {
   var genericInputs = []
   if (graph.node(node)['inputPorts'] !== undefined) {
@@ -222,25 +238,53 @@ export function replaceGenerics (graph) {
 }
 
 function replacePathGenerics (graph, path, type, firstPort) {
-  for (var k = 1; k < path.length; k++) {
+  for (var r = 0; r < path.length - 1; r++) {
+    var fromNode = graph.node(path[r].edge.from)
+    var fromType = fromNode.outputPorts[path[r].edge.outPort]
+    if (isGeneric(fromType)) {
+      if (!fromNode.generic || !fromNode.genericType) {
+        throw new Error('Cannot resolve generic type for ' + path[r].edge.from + ' on path ' + JSON.stringify(path))
+      }
+      fromType = tangleType(fromNode.genericType, fromType)
+      fromNode.outputPorts[path[r].edge.outPort] = fromType
+    }
+    var toNode = graph.node(path[r].edge.to)
+    var toType = toNode.inputPorts[path[r].edge.inPort]
+    var entangled = toNode.genericType || entangleType(fromType, toType)
+    toNode.generic = true
+    toNode.genericType = entangled
+    if (isGeneric(toType)) {
+      toNode.inputPorts[path[r].edge.inPort] = tangleType(entangled, toType)
+    }
+  }
+  /* for (var k = 1; k < path.length; k++) {
+    var curNode = graph.node(path[k].node)
+    var curPort = curNode.inputPorts[path[k].port]
+    if (!curPort) {
+      if (curNode.outputPorts[path[k].port] && curNode.genericType) {
+        curType = tangleType(curNode.genericType, curNode.outputPorts[path[k].port])
+      }
+      continue
+    }
+    curNode.genericType = entangleType(curType, curPort)
+    curNode.generic = true
+    curType = curNode.genericType
     var genInput = genericInputs(graph, path[k].node)
     for (var l = 0; l < genInput.length; l++) {
-      graph.node(path[k].node).generic = true
-      graph.node(path[k].node).inputPorts[genInput[l]] =
-        replaceGeneric(graph.node(path[k].node).inputPorts[genInput[l]], type)
+      curNode.inputPorts[genInput[l]] =
+        replaceGeneric(curNode.inputPorts[genInput[l]], curNode.genericType)
     }
     var genOutput = genericOutputs(graph, path[k].node)
     for (var m = 0; m < genOutput.length; m++) {
-      graph.node(path[k].node).generic = true
-      graph.node(path[k].node).outputPorts[genOutput[m]] =
-        replaceGeneric(graph.node(path[k].node).outputPorts[genOutput[m]], type)
+      curNode.outputPorts[genOutput[m]] =
+        replaceGeneric(curNode.outputPorts[genOutput[m]], curNode.genericType)
     }
   }
   if (firstPort !== undefined) {
-    graph.node(path[k].node).generic = true
+    graph.node(path[0].node).generic = true
     graph.node(path[0].node).outputPorts[firstPort] =
       replaceGeneric(graph.node(path[0].node).outputPorts[firstPort], type)
-  }
+  }*/
 }
 
 export function addTypeConversion (processGraph, convertGraph) {
