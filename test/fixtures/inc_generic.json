@@ -29,7 +29,7 @@
         "version": "0.2.0",
         "inputPorts": {},
         "outputPorts": {
-          "output": "string"
+          "output": "int"
         },
         "atomic": true,
         "path": [],

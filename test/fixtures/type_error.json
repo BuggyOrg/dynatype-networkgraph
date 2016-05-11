@@ -6,287 +6,197 @@
   },
   "nodes": [
     {
-      "v": "out",
+      "v": "EXAMPLE1",
+      "value": {}
+    },
+    {
+      "v": "0_CONST1",
       "value": {
-        "id": "io/stdout",
-        "version": "0.2.0",
+        "nodeType": "process",
+        "id": "math/const1",
+        "version": "0.1.0",
+        "inputPorts": {},
+        "outputPorts": {
+          "const1": "int"
+        },
+        "atomic": true
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "1_CONST2",
+      "value": {
+        "nodeType": "process",
+        "id": "math/const2",
+        "version": "0.1.0",
+        "inputPorts": {},
+        "outputPorts": {
+          "const2": "bool"
+        },
+        "atomic": true
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "2_DEMUX",
+      "value": {
+        "nodeType": "process",
+        "name": "DEMUX",
+        "id": "logic/demux",
         "inputPorts": {
-          "input": "generic"
+          "input": "generic",
+          "control": "generic"
+        },
+        "outputPorts": {
+          "outTrue": "generic",
+          "outFalse": "generic"
+        },
+        "atomic": true,
+        "version": "0.1.0"
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "3_STDOUT",
+      "value": {
+        "nodeType": "process",
+        "id": "io/stdout",
+        "version": "0.1.0",
+        "inputPorts": {
+          "input": "string"
         },
         "outputPorts": {},
-        "atomic": true,
-        "path": [],
-        "branchPath": "out",
-        "branch": "out",
-        "name": "out",
-        "nodeType": "process"
-      }
+        "atomic": true
+      },
+      "parent": "EXAMPLE1"
     },
     {
-      "v": "in",
+      "v": "4_STDOUT",
       "value": {
-        "id": "io/stdin",
-        "version": "0.2.0",
-        "inputPorts": {},
-        "outputPorts": {
-          "output": "string"
-        },
-        "atomic": true,
-        "path": [],
-        "branchPath": "in",
-        "branch": "in",
-        "name": "in",
-        "nodeType": "process"
-      }
-    },
-    {
-      "v": "inc",
-      "value": {
-        "id": "math/inc",
-        "version": "0.3.0",
+        "nodeType": "process",
+        "id": "io/stdout",
+        "version": "0.1.0",
         "inputPorts": {
-          "i": "int"
+          "input": "string"
         },
-        "outputPorts": {
-          "inc": "int"
-        },
-        "atomic": false,
-        "implementation": {
-          "nodes": [
-            {
-              "id": "math/add",
-              "version": "0.1.1",
-              "inputPorts": {
-                "s1": "generic",
-                "s2": "generic"
-              },
-              "outputPorts": {
-                "sum": "int"
-              },
-              "atomic": true,
-              "path": [
-                {
-                  "meta": "math/inc",
-                  "branch": "inc",
-                  "version": "0.3.0",
-                  "path": []
-                }
-              ],
-              "parent": "inc",
-              "branchPath": "inc:add",
-              "branch": "add"
-            },
-            {
-              "id": "math/const1",
-              "version": "0.2.0",
-              "inputPorts": {},
-              "outputPorts": {
-                "output": "int"
-              },
-              "atomic": true,
-              "path": [
-                {
-                  "meta": "math/inc",
-                  "branch": "inc",
-                  "version": "0.3.0",
-                  "path": []
-                }
-              ],
-              "parent": "inc",
-              "branchPath": "inc:c",
-              "branch": "c"
-            }
-          ],
-          "edges": [
-            {
-              "from": "i",
-              "to": "add:s1"
-            },
-            {
-              "from": "c:output",
-              "to": "add:s2"
-            },
-            {
-              "from": "add:sum",
-              "to": "inc"
-            }
-          ]
-        },
-        "path": [],
-        "branchPath": "inc",
-        "branch": "inc",
-        "name": "inc",
-        "nodeType": "process"
-      }
-    },
-    {
-      "v": "inc:add",
-      "value": {
-        "id": "math/add",
-        "version": "0.1.1",
-        "inputPorts": {
-          "s1": "generic",
-          "s2": "generic"
-        },
-        "outputPorts": {
-          "sum": "int"
-        },
-        "atomic": true,
-        "path": [
-          {
-            "meta": "math/inc",
-            "branch": "inc",
-            "version": "0.3.0",
-            "path": []
-          }
-        ],
-        "parent": "inc",
-        "branchPath": "inc:add",
-        "branch": "add",
-        "nodeType": "process"
+        "outputPorts": {},
+        "atomic": true
       },
-      "parent": "inc"
+      "parent": "EXAMPLE1"
     },
     {
-      "v": "inc:c",
-      "value": {
-        "id": "math/const1",
-        "version": "0.2.0",
-        "inputPorts": {},
-        "outputPorts": {
-          "output": "int"
-        },
-        "atomic": true,
-        "path": [
-          {
-            "meta": "math/inc",
-            "branch": "inc",
-            "version": "0.3.0",
-            "path": []
-          }
-        ],
-        "parent": "inc",
-        "branchPath": "inc:c",
-        "branch": "c",
-        "nodeType": "process"
-      },
-      "parent": "inc"
-    },
-    {
-      "v": "inc_PORT_i",
-      "value": {
-        "nodeType": "inPort",
-        "portName": "i",
-        "hierarchyBorder": true,
-        "process": "inc"
-      }
-    },
-    {
-      "v": "in_PORT_output",
+      "v": "0_CONST1_PORT_const1",
       "value": {
         "nodeType": "outPort",
-        "portName": "output",
-        "process": "in"
-      }
+        "portName": "const1"
+      },
+      "parent": "EXAMPLE1"
     },
     {
-      "v": "out_PORT_input",
-      "value": {
-        "nodeType": "inPort",
-        "portName": "input",
-        "process": "out"
-      }
-    },
-    {
-      "v": "inc_PORT_inc",
+      "v": "1_CONST2_PORT_const2",
       "value": {
         "nodeType": "outPort",
-        "portName": "inc",
-        "hierarchyBorder": true,
-        "process": "inc"
-      }
+        "portName": "const2"
+      },
+      "parent": "EXAMPLE1"
     },
     {
-      "v": "inc:add_PORT_s1",
+      "v": "2_DEMUX_PORT_input",
       "value": {
         "nodeType": "inPort",
-        "portName": "s1",
-        "process": "inc:add"
+        "portName": "input"
       },
-      "parent": "inc"
+      "parent": "EXAMPLE1"
     },
     {
-      "v": "inc:add_PORT_s2",
+      "v": "2_DEMUX_PORT_control",
       "value": {
         "nodeType": "inPort",
-        "portName": "s2",
-        "process": "inc:add"
+        "portName": "control"
       },
-      "parent": "inc"
+      "parent": "EXAMPLE1"
     },
     {
-      "v": "inc:c_PORT_output",
+      "v": "2_DEMUX_PORT_outTrue",
       "value": {
         "nodeType": "outPort",
-        "portName": "output",
-        "process": "inc:c"
+        "portName": "outTrue"
       },
-      "parent": "inc"
+      "parent": "EXAMPLE1"
     },
     {
-      "v": "inc:add_PORT_sum",
+      "v": "2_DEMUX_PORT_outFalse",
       "value": {
         "nodeType": "outPort",
-        "portName": "sum",
-        "process": "inc:add"
+        "portName": "outFalse"
       },
-      "parent": "inc"
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "3_STDOUT_PORT_input",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "input"
+      },
+      "parent": "EXAMPLE1"
+    },
+    {
+      "v": "4_STDOUT_PORT_input",
+      "value": {
+        "nodeType": "inPort",
+        "portName": "input"
+      },
+      "parent": "EXAMPLE1"
     }
   ],
   "edges": [
     {
-      "v": "in",
-      "w": "in_PORT_output"
+      "v": "0_CONST1",
+      "w": "0_CONST1_PORT_const1"
     },
     {
-      "v": "in_PORT_output",
-      "w": "inc_PORT_i"
+      "v": "1_CONST2",
+      "w": "1_CONST2_PORT_const2"
     },
     {
-      "v": "out_PORT_input",
-      "w": "out"
+      "v": "1_CONST2_PORT_const2",
+      "w": "2_DEMUX_PORT_control"
     },
     {
-      "v": "inc_PORT_inc",
-      "w": "out_PORT_input"
+      "v": "0_CONST1_PORT_const1",
+      "w": "2_DEMUX_PORT_input"
     },
     {
-      "v": "inc:add_PORT_s1",
-      "w": "inc:add"
+      "v": "2_DEMUX_PORT_input",
+      "w": "2_DEMUX"
     },
     {
-      "v": "inc_PORT_i",
-      "w": "inc:add_PORT_s1"
+      "v": "2_DEMUX_PORT_control",
+      "w": "2_DEMUX"
     },
     {
-      "v": "inc:add_PORT_s2",
-      "w": "inc:add"
+      "v": "2_DEMUX",
+      "w": "2_DEMUX_PORT_outTrue"
     },
     {
-      "v": "inc:c",
-      "w": "inc:c_PORT_output"
+      "v": "2_DEMUX",
+      "w": "2_DEMUX_PORT_outFalse"
     },
     {
-      "v": "inc:c_PORT_output",
-      "w": "inc:add_PORT_s2"
+      "v": "2_DEMUX_PORT_outTrue",
+      "w": "3_STDOUT_PORT_input"
     },
     {
-      "v": "inc:add",
-      "w": "inc:add_PORT_sum"
+      "v": "2_DEMUX_PORT_outFalse",
+      "w": "4_STDOUT_PORT_input"
     },
     {
-      "v": "inc:add_PORT_sum",
-      "w": "inc_PORT_inc"
+      "v": "3_STDOUT_PORT_input",
+      "w": "3_STDOUT"
+    },
+    {
+      "v": "4_STDOUT_PORT_input",
+      "w": "4_STDOUT"
     }
   ]
 }

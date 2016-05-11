@@ -42,7 +42,6 @@
       "value": {
         "nodeType": "process",
         "name": "DEMUX",
-        "generic": true,
         "id": "logic/demux",
         "inputPorts": {
           "input": "int",
@@ -53,7 +52,9 @@
           "outFalse": "int"
         },
         "atomic": true,
-        "version": "0.1.0"
+        "version": "0.1.0",
+        "generic": true,
+        "genericType": "int"
       },
       "parent": "EXAMPLE1"
     },
@@ -90,7 +91,6 @@
       "value": {
         "nodeType": "process",
         "meta": "math/inc",
-        "generic": true,
         "type": "composite",
         "parent": "EXAMPLE1",
         "inputPorts": {
@@ -98,7 +98,9 @@
         },
         "outputPorts": {
           "inc": "int"
-        }
+        },
+        "generic": true,
+        "genericType": "int"
       },
       "parent": "EXAMPLE1"
     },

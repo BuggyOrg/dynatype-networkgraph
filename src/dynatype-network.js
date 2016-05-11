@@ -38,7 +38,7 @@ var replaceAll = (str, search, replacement) => {
 }
 
 function isGeneric (name) {
-  return name === 'generic' || name === '[generic]' || name === 'function'
+  return name === 'generic' || name === '[generic]'
 }
 
 export function replaceGeneric (what, replacement) {
@@ -184,23 +184,17 @@ export function replaceGenerics (graph) {
   var processGraph = replaceTypeHints(graph)
   var nodes = processGraph.nodes()
   for (var j = 0; j < nodes.length; j++) {
-    var paths = replaceGenericInput(graph, nodes[j])
-    // var types = ''
+    var paths = replaceGenericInput(processGraph, nodes[j])
     var pathsToReplace = []
     for (let i = 0; i < paths.length; i++) {
       var currentPath = paths[i]
       var type = processGraph.node(currentPath[0].node).outputPorts[currentPath[0].port] ||
         processGraph.node(currentPath[0].node).inputPorts[currentPath[0].port]
-      /* if (types === '') {
-        types = type
-      } else if (type !== types) {
-        var error = 'Type mismatch: Two pathes ending in node ' + currentPath[currentPath.length - 1].node + ' have different types: ' + types + ' and ' + type
-        throw new Error(error)
-      }*/
-      if (type === 'generic') {
+      if (isGeneric(type)) {
         pathsToReplace = pathsToReplace.concat([currentPath])
       } else {
         var validType = type
+        // finds the type backwards
         replacePathGenerics(processGraph, currentPath, type)
       }
     }
@@ -209,12 +203,17 @@ export function replaceGenerics (graph) {
       var keys = Object.keys(secondInputs)
       for (let i = 0; i < keys.length; i++) {
         if (secondInputs[keys[i]] !== 'generic') {
+          // takes the type of another input
+          if (validType !== undefined && validType !== secondInputs[keys[i]]) {
+            var error = 'Type mismatch: Two pathes to node ' + nodes[j] + ' have different types: ' + validType + ' and ' + secondInputs[keys[i]] + '.'
+            throw new Error(error)
+          }
           validType = secondInputs[keys[i]]
         }
       }
     }
     if (validType === undefined && pathsToReplace.length !== 0) {
-      paths = replaceGenericOutput(graph, nodes[j])
+      paths = replaceGenericOutput(processGraph, nodes[j])
       for (let i = 0; i < paths.length; i++) {
         currentPath = _.filter(paths[i], (node) => node.port !== null)
         type = processGraph.node(currentPath[currentPath.length - 1].node).inputPorts[currentPath[currentPath.length - 1].port] ||
@@ -223,21 +222,72 @@ export function replaceGenerics (graph) {
           pathsToReplace = pathsToReplace.concat([currentPath])
         } else {
           validType = type
-          replacePathGenerics(processGraph, currentPath, type)
+          // finds the type forwards
+          replacePathGenericsForward(processGraph, currentPath)
         }
       }
     }
+
     if (validType === undefined && pathsToReplace.length !== 0) {
       throw new Error('Generics could not be replaced: No type found.')
     }
     for (let p = 0; p < pathsToReplace.length; p++) {
-      replacePathGenerics(processGraph, pathsToReplace[p], validType, pathsToReplace[p][0].port)
+      // takes the type of the second input
+      replacePathGenericsForward(processGraph, pathsToReplace[p], validType)
     }
   }
   return processGraph
 }
 
-function replacePathGenerics (graph, path, type, firstPort) {
+function replacePathGenericsForward (graph, path, type) {
+  for (var r = path.length - 1; r >= 0; r--) {
+    // takes the parameter type if it's defined
+    if (r === path.length - 1 && type !== undefined) {
+      var genInput = genericInputs(graph, path[r].node)
+      var genOutput = genericOutputs(graph, path[r].node)
+      graph.node(path[r].node).generic = true
+      graph.node(path[r].node).genericType = type
+      for (let l = 0; l < genInput.length; l++) {
+        graph.node(path[r].node).inputPorts[genInput[l]] =
+          tangleType(graph.node(path[r].node).genericType, graph.node(path[r].node).inputPorts[genInput[l]])
+      }
+      for (let l = 0; l < genOutput.length; l++) {
+        graph.node(path[r].node).outputPorts[genOutput[l]] =
+          tangleType(graph.node(path[r].node).genericType, graph.node(path[r].node).outputPorts[genOutput[l]])
+      }
+    } else if (r > 0 || type !== undefined) {
+      var toNode = graph.node(path[r].edge.to)
+      var toType = (graph.parent(path[r].edge.from) === path[r].edge.to) ? toNode.outputPorts[path[r].edge.inPort] : toNode.inputPorts[path[r].edge.inPort]
+      if (isGeneric(toType)) {
+        if (!toNode.generic || !toNode.genericType) {
+          throw new Error('Cannot resolve generic type for ' + path[r].edge.to + ' on path ' + JSON.stringify(path))
+        }
+        toType = tangleType(toNode.genericType, toType)
+        toNode.inputPorts[path[r].edge.inPort] = toType
+      }
+      var fromNode = graph.node(path[r].edge.from)
+      var fromType = (graph.parent(path[r].edge.to) === path[r].edge.from) ? fromNode.inputPorts[path[r].edge.outPort] : fromNode.outputPorts[path[r].edge.outPort]
+      var entangled = fromNode.genericType || entangleType(toType, fromType)
+      if (isGeneric(fromType)) {
+        if (fromNode.genericType !== undefined && fromNode.genericType !== entangleType(toType, fromType)) {
+          var error = 'Type mismatch: Two pathes to node ' + path[r].edge.from + ' have different types: ' + fromNode.genericType + ' and ' + entangleType(toType, fromType) + '.'
+          throw new Error(error)
+        }
+        fromNode.generic = true
+        fromNode.genericType = entangled
+        fromNode.outputPorts[path[r].edge.outPort] = tangleType(entangled, fromType)
+      }
+    }
+  }
+  var firstNode = path[0].node
+  genInput = genericInputs(graph, firstNode)
+  for (let l = 0; l < genInput.length; l++) {
+    graph.node(firstNode).inputPorts[genInput[l]] =
+      tangleType(graph.node(firstNode).genericType, graph.node(firstNode).inputPorts[genInput[l]])
+  }
+}
+
+function replacePathGenerics (graph, path, type) {
   for (var r = 0; r < path.length - 1; r++) {
     var fromNode = graph.node(path[r].edge.from)
     var fromType = (graph.parent(path[r].edge.to) === path[r].edge.from) ? fromNode.inputPorts[path[r].edge.outPort] : fromNode.outputPorts[path[r].edge.outPort]
@@ -253,9 +303,13 @@ function replacePathGenerics (graph, path, type, firstPort) {
     var toNode = graph.node(path[r].edge.to)
     var toType = (graph.parent(path[r].edge.from) === path[r].edge.to) ? toNode.outputPorts[path[r].edge.inPort] : toNode.inputPorts[path[r].edge.inPort]
     var entangled = toNode.genericType || entangleType(fromType, toType)
-    toNode.generic = true
-    toNode.genericType = entangled
     if (isGeneric(toType)) {
+      if (toNode.genericType !== undefined && toNode.genericType !== entangleType(fromType, toType)) {
+        var error = 'Type mismatch: Two pathes to node ' + path[r].edge.to + ' have different types: ' + toNode.genericType + ' and ' + entangleType(fromType, toType) + '.'
+        throw new Error(error)
+      }
+      toNode.generic = true
+      toNode.genericType = entangled
       toNode.inputPorts[path[r].edge.inPort] = tangleType(entangled, toType)
     }
   }

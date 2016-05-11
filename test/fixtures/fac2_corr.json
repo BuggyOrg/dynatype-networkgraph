@@ -697,7 +697,8 @@
         "branchPath": "fac:is1",
         "branch": "is1",
         "nodeType": "process",
-        "generic": true
+        "generic": true,
+        "genericType": "int64"
       },
       "parent": "fac"
     },
@@ -757,7 +758,8 @@
         "branchPath": "fac:choose",
         "branch": "choose",
         "nodeType": "process",
-        "generic": true
+        "generic": true,
+        "genericType": "int64"
       },
       "parent": "fac"
     },
@@ -1280,7 +1282,8 @@
         "branchPath": "fac:recFac:is1",
         "branch": "is1",
         "nodeType": "process",
-        "generic": true
+        "generic": true,
+        "genericType": "int64"
       },
       "parent": "fac:recFac"
     },
@@ -1366,7 +1369,8 @@
         "branchPath": "fac:recFac:choose",
         "branch": "choose",
         "nodeType": "process",
-        "generic": true
+        "generic": true,
+        "genericType": "int64"
       },
       "parent": "fac:recFac"
     },
@@ -1704,7 +1708,8 @@
         "atomic": true,
         "specialForm": true,
         "nodeType": "process",
-        "generic": true
+        "generic": true,
+        "genericType": "int64"
       },
       "parent": "fac"
     },
@@ -1723,7 +1728,8 @@
         "atomic": true,
         "specialForm": true,
         "nodeType": "process",
-        "generic": true
+        "generic": true,
+        "genericType": "int64"
       },
       "parent": "fac:recFac"
     },
@@ -1741,7 +1747,8 @@
         },
         "atomic": true,
         "nodeType": "process",
-        "generic": true
+        "generic": true,
+        "genericType": "int64"
       },
       "parent": "fac"
     },
@@ -1759,7 +1766,8 @@
         },
         "atomic": true,
         "nodeType": "process",
-        "generic": true
+        "generic": true,
+        "genericType": "int64"
       },
       "parent": "fac"
     },
@@ -1777,7 +1785,8 @@
         },
         "atomic": true,
         "nodeType": "process",
-        "generic": true
+        "generic": true,
+        "genericType": "int64"
       },
       "parent": "fac:recFac"
     },
@@ -1795,7 +1804,8 @@
         },
         "atomic": true,
         "nodeType": "process",
-        "generic": true
+        "generic": true,
+        "genericType": "int64"
       },
       "parent": "fac:recFac"
     },

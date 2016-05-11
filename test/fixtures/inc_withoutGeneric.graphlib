@@ -20,7 +20,8 @@
         "branch": "out",
         "name": "out",
         "nodeType": "process",
-        "generic": true
+        "generic": true,
+        "genericType": "int"
       }
     },
     {
@@ -30,7 +31,7 @@
         "version": "0.2.0",
         "inputPorts": {},
         "outputPorts": {
-          "output": "string"
+          "output": "int"
         },
         "atomic": true,
         "path": [],
@@ -46,7 +47,7 @@
         "id": "math/inc",
         "version": "0.3.0",
         "inputPorts": {
-          "i": "string"
+          "i": "int"
         },
         "outputPorts": {
           "inc": "int"
@@ -118,7 +119,8 @@
         "branch": "inc",
         "name": "inc",
         "nodeType": "process",
-        "generic": true
+        "generic": true,
+        "genericType": "int"
       }
     },
     {
@@ -127,8 +129,8 @@
         "id": "math/add",
         "version": "0.1.1",
         "inputPorts": {
-          "s1": "string",
-          "s2": "string"
+          "s1": "int",
+          "s2": "int"
         },
         "outputPorts": {
           "sum": "int"
@@ -146,7 +148,8 @@
         "branchPath": "inc:add",
         "branch": "add",
         "nodeType": "process",
-        "generic": true
+        "generic": true,
+        "genericType": "int"
       },
       "parent": "inc"
     },

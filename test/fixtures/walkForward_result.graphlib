@@ -19,7 +19,9 @@
         "outputPorts": {
           "const1": "string"
         },
-        "atomic": true
+        "atomic": true,
+        "generic": true,
+        "genericType": "string"
       },
       "parent": "EXAMPLE1"
     },
@@ -33,7 +35,9 @@
         "outputPorts": {
           "const2": "string"
         },
-        "atomic": true
+        "atomic": true,
+        "generic": true,
+        "genericType": "string"
       },
       "parent": "EXAMPLE1"
     },
@@ -52,7 +56,9 @@
           "outFalse": "string"
         },
         "atomic": true,
-        "version": "0.1.0"
+        "version": "0.1.0",
+        "generic": true,
+        "genericType": "string"
       },
       "parent": "EXAMPLE1"
     },

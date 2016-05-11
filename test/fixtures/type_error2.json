@@ -17,7 +17,7 @@
         "version": "0.1.0",
         "inputPorts": {},
         "outputPorts": {
-          "const1": "int"
+          "const1": "generic"
         },
         "atomic": true
       },
@@ -31,7 +31,7 @@
         "version": "0.1.0",
         "inputPorts": {},
         "outputPorts": {
-          "const2": "bool"
+          "const2": "generic"
         },
         "atomic": true
       },
@@ -44,17 +44,15 @@
         "name": "DEMUX",
         "id": "logic/demux",
         "inputPorts": {
-          "input": "int",
-          "control": "bool"
+          "input": "generic",
+          "control": "generic"
         },
         "outputPorts": {
-          "outTrue": "int",
-          "outFalse": "int"
+          "outTrue": "generic",
+          "outFalse": "generic"
         },
         "atomic": true,
-        "version": "0.1.0",
-        "generic": true,
-        "genericType": "int"
+        "version": "0.1.0"
       },
       "parent": "EXAMPLE1"
     },
@@ -79,7 +77,7 @@
         "id": "io/stdout",
         "version": "0.1.0",
         "inputPorts": {
-          "input": "string"
+          "input": "int"
         },
         "outputPorts": {},
         "atomic": true
@@ -149,60 +147,6 @@
         "portName": "input"
       },
       "parent": "EXAMPLE1"
-    },
-    {
-      "v": "2_DEMUX_PORT_outTrue:3_STDOUT_PORT_input_1",
-      "value": {
-        "nodeType": "process",
-        "id": "translator/int_to_string",
-        "atomic": "true"
-      },
-      "parent": "EXAMPLE1"
-    },
-    {
-      "v": "2_DEMUX_PORT_outTrue:3_STDOUT_PORT_input_1_PORT_in",
-      "value": {
-        "nodeType": "inPort",
-        "portName": "input",
-        "isTrans": true
-      },
-      "parent": "EXAMPLE1"
-    },
-    {
-      "v": "2_DEMUX_PORT_outTrue:3_STDOUT_PORT_input_1_PORT_out",
-      "value": {
-        "nodeType": "outPort",
-        "portName": "output",
-        "isTrans": true
-      },
-      "parent": "EXAMPLE1"
-    },
-    {
-      "v": "2_DEMUX_PORT_outFalse:4_STDOUT_PORT_input_1",
-      "value": {
-        "nodeType": "process",
-        "id": "translator/int_to_string",
-        "atomic": "true"
-      },
-      "parent": "EXAMPLE1"
-    },
-    {
-      "v": "2_DEMUX_PORT_outFalse:4_STDOUT_PORT_input_1_PORT_in",
-      "value": {
-        "nodeType": "inPort",
-        "portName": "input",
-        "isTrans": true
-      },
-      "parent": "EXAMPLE1"
-    },
-    {
-      "v": "2_DEMUX_PORT_outFalse:4_STDOUT_PORT_input_1_PORT_out",
-      "value": {
-        "nodeType": "outPort",
-        "portName": "output",
-        "isTrans": true
-      },
-      "parent": "EXAMPLE1"
     }
   ],
   "edges": [
@@ -239,44 +183,20 @@
       "w": "2_DEMUX_PORT_outFalse"
     },
     {
+      "v": "2_DEMUX_PORT_outTrue",
+      "w": "3_STDOUT_PORT_input"
+    },
+    {
+      "v": "2_DEMUX_PORT_outFalse",
+      "w": "4_STDOUT_PORT_input"
+    },
+    {
       "v": "3_STDOUT_PORT_input",
       "w": "3_STDOUT"
     },
     {
       "v": "4_STDOUT_PORT_input",
       "w": "4_STDOUT"
-    },
-    {
-      "v": "2_DEMUX_PORT_outTrue:3_STDOUT_PORT_input_1_PORT_in",
-      "w": "2_DEMUX_PORT_outTrue:3_STDOUT_PORT_input_1"
-    },
-    {
-      "v": "2_DEMUX_PORT_outTrue:3_STDOUT_PORT_input_1",
-      "w": "2_DEMUX_PORT_outTrue:3_STDOUT_PORT_input_1_PORT_out"
-    },
-    {
-      "v": "2_DEMUX_PORT_outTrue",
-      "w": "2_DEMUX_PORT_outTrue:3_STDOUT_PORT_input_1_PORT_in"
-    },
-    {
-      "v": "2_DEMUX_PORT_outTrue:3_STDOUT_PORT_input_1_PORT_out",
-      "w": "3_STDOUT_PORT_input"
-    },
-    {
-      "v": "2_DEMUX_PORT_outFalse:4_STDOUT_PORT_input_1_PORT_in",
-      "w": "2_DEMUX_PORT_outFalse:4_STDOUT_PORT_input_1"
-    },
-    {
-      "v": "2_DEMUX_PORT_outFalse:4_STDOUT_PORT_input_1",
-      "w": "2_DEMUX_PORT_outFalse:4_STDOUT_PORT_input_1_PORT_out"
-    },
-    {
-      "v": "2_DEMUX_PORT_outFalse",
-      "w": "2_DEMUX_PORT_outFalse:4_STDOUT_PORT_input_1_PORT_in"
-    },
-    {
-      "v": "2_DEMUX_PORT_outFalse:4_STDOUT_PORT_input_1_PORT_out",
-      "w": "4_STDOUT_PORT_input"
     }
   ]
 }

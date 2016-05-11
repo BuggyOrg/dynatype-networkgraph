@@ -216,7 +216,9 @@
         "branch": "strToArr",
         "name": "strToArr",
         "recursive": false,
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true,
+        "genericType": "int64"
       }
     },
     {
@@ -231,7 +233,8 @@
             },
             "return": "int64"
           },
-          "data": "[int64]"
+          "data": "[int64]",
+          "result": "[int64]"
         },
         "outputPorts": {
           "result": "[int64]"
@@ -964,7 +967,9 @@
         "name": "mapInc",
         "recursive": false,
         "typeHint": {},
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true,
+        "genericType": "int64"
       }
     },
     {
@@ -973,10 +978,10 @@
         "id": "array/first",
         "version": "0.1.0",
         "inputPorts": {
-          "array": "[generic]"
+          "array": "[int64]"
         },
         "outputPorts": {
-          "value": "generic"
+          "value": "int64"
         },
         "atomic": true,
         "path": [
@@ -992,7 +997,9 @@
         "branch": "first",
         "recursive": false,
         "typeHint": {},
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true,
+        "genericType": "int64"
       },
       "parent": "mapInc"
     },
@@ -1038,10 +1045,10 @@
         "id": "array/rest",
         "version": "0.1.0",
         "inputPorts": {
-          "array": "int64"
+          "array": "[int64]"
         },
         "outputPorts": {
-          "rest": "int64"
+          "rest": "[int64]"
         },
         "atomic": true,
         "path": [
@@ -1057,7 +1064,9 @@
         "branch": "rest",
         "recursive": false,
         "typeHint": {},
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true,
+        "genericType": "[int64]"
       },
       "parent": "mapInc"
     },
@@ -1067,7 +1076,7 @@
         "id": "array/empty",
         "version": "0.1.0",
         "inputPorts": {
-          "array": "generic"
+          "array": "[int64]"
         },
         "outputPorts": {
           "isEmpty": "bool"
@@ -1086,7 +1095,9 @@
         "branch": "empty",
         "recursive": false,
         "typeHint": {},
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true,
+        "genericType": "[int64]"
       },
       "parent": "mapInc"
     },
@@ -1096,12 +1107,12 @@
         "name": "DEMUX",
         "id": "logic/demux",
         "inputPorts": {
-          "input": "int64",
+          "input": "[int64]",
           "control": "bool"
         },
         "outputPorts": {
-          "outTrue": "int64",
-          "outFalse": "int64"
+          "outTrue": "[int64]",
+          "outFalse": "[int64]"
         },
         "atomic": true,
         "version": "0.2.0",
@@ -1119,7 +1130,9 @@
         "branch": "term",
         "recursive": false,
         "typeHint": {},
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true,
+        "genericType": "[int64]"
       },
       "parent": "mapInc"
     },
@@ -1620,7 +1633,9 @@
         },
         "recursive": true,
         "typeHint": {},
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true,
+        "genericType": "int64"
       },
       "parent": "mapInc"
     },
@@ -1630,10 +1645,10 @@
         "id": "array/first",
         "version": "0.1.0",
         "inputPorts": {
-          "array": "[generic]"
+          "array": "[int64]"
         },
         "outputPorts": {
-          "value": "generic"
+          "value": "int64"
         },
         "atomic": true,
         "path": [
@@ -1662,7 +1677,9 @@
         "branch": "first",
         "recursive": false,
         "typeHint": {},
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true,
+        "genericType": "int64"
       },
       "parent": "mapInc:recMap"
     },
@@ -1721,10 +1738,10 @@
         "id": "array/rest",
         "version": "0.1.0",
         "inputPorts": {
-          "array": "generic"
+          "array": "[int64]"
         },
         "outputPorts": {
-          "rest": "generic"
+          "rest": "[int64]"
         },
         "atomic": true,
         "path": [
@@ -1753,7 +1770,9 @@
         "branch": "rest",
         "recursive": false,
         "typeHint": {},
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true,
+        "genericType": "[int64]"
       },
       "parent": "mapInc:recMap"
     },
@@ -1763,7 +1782,7 @@
         "id": "array/empty",
         "version": "0.1.0",
         "inputPorts": {
-          "array": "generic"
+          "array": "[int64]"
         },
         "outputPorts": {
           "isEmpty": "bool"
@@ -1795,7 +1814,9 @@
         "branch": "empty",
         "recursive": false,
         "typeHint": {},
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true,
+        "genericType": "[int64]"
       },
       "parent": "mapInc:recMap"
     },
@@ -1805,12 +1826,12 @@
         "name": "DEMUX",
         "id": "logic/demux",
         "inputPorts": {
-          "input": "int64",
+          "input": "[int64]",
           "control": "bool"
         },
         "outputPorts": {
-          "outTrue": "int64",
-          "outFalse": "int64"
+          "outTrue": "[int64]",
+          "outFalse": "[int64]"
         },
         "atomic": true,
         "version": "0.2.0",
@@ -1841,7 +1862,9 @@
         "branch": "term",
         "recursive": false,
         "typeHint": {},
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true,
+        "genericType": "[int64]"
       },
       "parent": "mapInc:recMap"
     },
@@ -1851,16 +1874,11 @@
         "id": "functional/map",
         "version": "0.2.2",
         "inputPorts": {
-          "fn": {
-            "arguments": {
-              "i": "int64"
-            },
-            "return": "int64"
-          },
-          "data": "[generic]"
+          "fn": "function",
+          "data": "[int64]"
         },
         "outputPorts": {
-          "result": "[generic]"
+          "result": "[int64]"
         },
         "implementation": {
           "nodes": [
@@ -1990,7 +2008,9 @@
         "branch": "recMap",
         "recursive": true,
         "typeHint": {},
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true,
+        "genericType": "int64"
       },
       "parent": "mapInc:recMap"
     },
@@ -2000,11 +2020,11 @@
         "id": "control/join",
         "version": "0.2.0",
         "inputPorts": {
-          "in1": "int64",
-          "in2": "int64"
+          "in1": "[int64]",
+          "in2": "[int64]"
         },
         "outputPorts": {
-          "to": "int64"
+          "to": "[int64]"
         },
         "atomic": true,
         "specialForm": true,
@@ -2034,7 +2054,9 @@
         "branch": "join",
         "recursive": false,
         "typeHint": {},
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true,
+        "genericType": "[int64]"
       },
       "parent": "mapInc:recMap"
     },
@@ -2077,7 +2099,9 @@
         "branch": "prep",
         "recursive": false,
         "typeHint": {},
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true,
+        "genericType": "int64"
       },
       "parent": "mapInc:recMap"
     },
@@ -2087,11 +2111,11 @@
         "id": "control/join",
         "version": "0.2.0",
         "inputPorts": {
-          "in1": "int64",
-          "in2": "int64"
+          "in1": "[int64]",
+          "in2": "[int64]"
         },
         "outputPorts": {
-          "to": "int64"
+          "to": "[int64]"
         },
         "atomic": true,
         "specialForm": true,
@@ -2108,7 +2132,9 @@
         "branch": "join",
         "recursive": false,
         "typeHint": {},
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true,
+        "genericType": "[int64]"
       },
       "parent": "mapInc"
     },
@@ -2138,7 +2164,9 @@
         "branch": "prep",
         "recursive": false,
         "typeHint": {},
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true,
+        "genericType": "int64"
       },
       "parent": "mapInc"
     },
@@ -2160,7 +2188,9 @@
         "name": "arrToStr",
         "recursive": false,
         "typeHint": {},
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true,
+        "genericType": "int64"
       }
     },
     {
@@ -2188,15 +2218,17 @@
         "id": "control/duplicate",
         "version": "0.2.0",
         "inputPorts": {
-          "in": "int64"
+          "in": "[int64]"
         },
         "outputPorts": {
-          "d1": "int64",
-          "d2": "int64"
+          "d1": "[int64]",
+          "d2": "[int64]"
         },
         "atomic": true,
         "typeHint": {},
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true,
+        "genericType": "[int64]"
       },
       "parent": "mapInc"
     },
@@ -2239,15 +2271,17 @@
         "id": "control/duplicate",
         "version": "0.2.0",
         "inputPorts": {
-          "in": "int64"
+          "in": "[int64]"
         },
         "outputPorts": {
-          "d1": "int64",
-          "d2": "int64"
+          "d1": "[int64]",
+          "d2": "[int64]"
         },
         "atomic": true,
         "typeHint": {},
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true,
+        "genericType": "[int64]"
       },
       "parent": "mapInc"
     },
@@ -2257,15 +2291,17 @@
         "id": "control/duplicate",
         "version": "0.2.0",
         "inputPorts": {
-          "in": "int64"
+          "in": "[int64]"
         },
         "outputPorts": {
-          "d1": "int64",
-          "d2": "int64"
+          "d1": "[int64]",
+          "d2": "[int64]"
         },
         "atomic": true,
         "typeHint": {},
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true,
+        "genericType": "[int64]"
       },
       "parent": "mapInc:recMap"
     },
@@ -2308,15 +2344,17 @@
         "id": "control/duplicate",
         "version": "0.2.0",
         "inputPorts": {
-          "in": "int64"
+          "in": "[int64]"
         },
         "outputPorts": {
-          "d1": "int64",
-          "d2": "int64"
+          "d1": "[int64]",
+          "d2": "[int64]"
         },
         "atomic": true,
         "typeHint": {},
-        "nodeType": "process"
+        "nodeType": "process",
+        "generic": true,
+        "genericType": "[int64]"
       },
       "parent": "mapInc:recMap"
     },

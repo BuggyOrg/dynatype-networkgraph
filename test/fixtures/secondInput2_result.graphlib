@@ -33,7 +33,9 @@
         "outputPorts": {
           "const2": "int"
         },
-        "atomic": true
+        "atomic": true,
+        "generic": true,
+        "genericType": "int"
       },
       "parent": "EXAMPLE1"
     },
@@ -52,7 +54,9 @@
           "outFalse": "int"
         },
         "atomic": true,
-        "version": "0.1.0"
+        "version": "0.1.0",
+        "generic": true,
+        "genericType": "int"
       },
       "parent": "EXAMPLE1"
     },
