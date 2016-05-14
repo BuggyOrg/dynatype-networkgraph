@@ -38,7 +38,7 @@ var replaceAll = (str, search, replacement) => {
 }
 
 function isGeneric (name) {
-  return name === 'generic' || name === '[generic]' || name === 'function'
+  return name === 'generic' || name === '[generic]'
 }
 
 export function replaceGeneric (what, replacement) {
