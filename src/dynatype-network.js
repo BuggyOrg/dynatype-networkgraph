@@ -185,18 +185,11 @@ export function replaceGenerics (graph) {
   var nodes = processGraph.nodes()
   for (var j = 0; j < nodes.length; j++) {
     var paths = replaceGenericInput(graph, nodes[j])
-    // var types = ''
     var pathsToReplace = []
     for (let i = 0; i < paths.length; i++) {
       var currentPath = paths[i]
       var type = processGraph.node(currentPath[0].node).outputPorts[currentPath[0].port] ||
         processGraph.node(currentPath[0].node).inputPorts[currentPath[0].port]
-      /* if (types === '') {
-        types = type
-      } else if (type !== types) {
-        var error = 'Type mismatch: Two pathes ending in node ' + currentPath[currentPath.length - 1].node + ' have different types: ' + types + ' and ' + type
-        throw new Error(error)
-      }*/
       if (type === 'generic') {
         pathsToReplace = pathsToReplace.concat([currentPath])
       } else {
@@ -384,26 +377,5 @@ export function genericNodes (graph) {
 }
 
 export function isGenericFree (graph) {
-  var nodes = graph.nodes()
-  for (let i = 0; i < nodes.length; i++) {
-    var inp = graph.node(nodes[i]).inputPorts
-    if (inp !== undefined) {
-      var inpKeys = Object.keys(inp)
-      for (let j = 0; j < inpKeys.length; j++) {
-        if (isGeneric(inp[inpKeys[j]])) {
-          return false
-        }
-      }
-    }
-    var outp = graph.node(nodes[i]).outputPorts
-    if (outp !== undefined) {
-      var outpKeys = Object.keys(outp)
-      for (let j = 0; j < outpKeys.length; j++) {
-        if (isGeneric(outp[outpKeys[j]])) {
-          return false
-        }
-      }
-    }
-  }
-  return true
+  return genericNodes(graph).length === 0
 }

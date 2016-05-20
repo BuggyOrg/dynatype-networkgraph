@@ -132,7 +132,6 @@ describe('Dynamic type network graph', function () {
     var mapGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/map.json')))
     var genGraph = dtypenet.replaceGenerics(mapGraph)
     expect(dtypenet.isGenericFree(genGraph)).to.be.true
-    // console.log(JSON.stringify(grlib.json.write(genGraph), null, 2))
     expect(genGraph.node('mapInc').inputPorts['data']).to.equal('[int64]')
     expect(genGraph.node('mapInc:apply').inputPorts['value']).to.equal('int64')
     expect(genGraph.node('mapInc:apply').outputPorts['result']).to.equal('int64')
@@ -189,6 +188,20 @@ describe('Dynamic type network graph', function () {
     expect(typedGraph.node('1_INC').inputPorts['i']).to.equal('int')
     expect(typedGraph.node('1_INC').outputPorts['inc']).to.equal('[int]')
     expect(typedGraph.node('2_STDOUT').inputPorts['input']).to.equal('[int]')
+  })
+
+  it('can process graphs with continuations', () => {
+    var gaGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/factorial_mux.json')))
+    var typedGraph = dtypenet.replaceGenerics(gaGraph)
+    expect(typedGraph).to.be.ok
+    expect(dtypenet.genericNodes(typedGraph)).to.have.length(0)
+  })
+
+  it('can handle ackermann example', () => {
+    var gaGraph = grlib.json.read(JSON.parse(fs.readFileSync('./test/fixtures/ack.json')))
+    var typedGraph = dtypenet.replaceGenerics(gaGraph)
+    expect(typedGraph).to.be.ok
+    expect(dtypenet.genericNodes(typedGraph)).to.have.length(0)
   })
 
 /*
