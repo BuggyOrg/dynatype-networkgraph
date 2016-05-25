@@ -2,6 +2,7 @@ var grlib = require('graphlib')
 // var graphtools = require('@buggyorg/graphtools')
 import _ from 'lodash'
 import * as graphtools from '@buggyorg/graphtools'
+var utils = graphtools.utils
 
 function isInPort (node) {
   return (node['nodeType'] === 'inPort' && node['isTrans'] === undefined && !node['isTrans'])
@@ -236,7 +237,70 @@ export function replaceGenerics (graph) {
       replacePathGenericsForward(processGraph, pathsToReplace[p], validType)
     }
   }
+  var typeRefs = determineTypeReferences(processGraph)
+  console.error(typeRefs)
+  applyKnownTypeRefs(processGraph, typeRefs)
+  replaceUnkownTypeReferences(processGraph)
+  // typeRefs.a.b.c
   return processGraph
+}
+
+function isTypeRef (type) {
+  return typeof (type) === 'object' && type.type === 'type-ref'
+}
+
+function determineTypeReferences (graph) {
+  return _(graph.edges())
+    .map((e) => _.merge({}, e, {value: graph.edge(e)}))
+    .filter((e) => isTypeRef(utils.portType(graph, e.v, e.value.outPort)) ||
+      isTypeRef(utils.portType(graph, e.w, e.value.inPort)))
+    .reject((e) => isGeneric(utils.portType(graph, e.v, e.value.outPort)) ||
+      isGeneric(utils.portType(graph, e.w, e.value.inPort)))
+    .map((e) => {
+      var vTypeNode = isTypeRef(utils.portType(graph, e.v, e.value.outPort))
+      return {
+        refNode: (vTypeNode) ? e.v : e.w,
+        refPort: (vTypeNode) ? e.value.outPort : e.value.inPort,
+        reference: (vTypeNode) ? utils.portType(graph, e.v, e.value.outPort) : utils.portType(graph, e.w, e.value.inPort),
+        type: (vTypeNode) ? utils.portType(graph, e.w, e.value.inPort) : utils.portType(graph, e.v, e.value.outPort)
+      }
+    })
+    // .map((e) => { console.error(utils.portType(graph, e.v, e.value.outPort), ' → ', utils.portType(graph, e.w, e.value.inPort)); return e })
+    .value()
+}
+
+function applyKnownTypeRefs (graph, typeRefs) {
+  _(typeRefs)
+  .each((r) => {
+    var node = graph.node(r.refNode)
+    var oNode = graph.node(r.reference.node)
+    node[utils.portDirectionType(graph, r.refNode, r.refPort)][r.refPort] = r.type
+    oNode[utils.portDirectionType(graph, r.reference.node, r.reference.port)][r.reference.port] = r.type
+    graph.setNode(r.refNode, _.cloneDeep(node))
+    graph.setNode(r.reference.node, _.cloneDeep(oNode))
+  })
+}
+
+function replaceUnkownTypeReferences (graph) {
+  if (graph !== '') {
+    return
+  }
+  _(graph.nodes())
+    .map((n) => graph.node(n))
+    .each((n) => {
+      replacePortReferences(graph, n, 'inputPorts')
+      replacePortReferences(graph, n, 'outputPorts')
+    })
+}
+
+function replacePortReferences (graph, node, portType) {
+  node[portType] = _.mapValues(node[portType], (type, key) => {
+    if (isTypeRef(type)) {
+      return graph.node(type.node)[portType][type.port]
+    }
+    return type
+  })
+  graph.setNode(node.branchPath, _.cloneDeep(node))
 }
 
 function replacePathGenericsForward (graph, path, type) {
@@ -269,8 +333,10 @@ function replacePathGenericsForward (graph, path, type) {
       var fromType = (graph.parent(path[r].edge.to) === path[r].edge.from) ? fromNode.inputPorts[path[r].edge.outPort] : fromNode.outputPorts[path[r].edge.outPort]
       var entangled = fromNode.genericType || entangleType(toType, fromType)
       if (isGeneric(fromType)) {
-        if (fromNode.genericType !== undefined && fromNode.genericType !== entangleType(toType, fromType)) {
-          var error = 'Type mismatch: Two pathes to node ' + path[r].edge.from + ' have different types: ' + fromNode.genericType + ' and ' + entangleType(toType, fromType) + '.'
+        if (fromNode.genericType !== undefined && fromNode.genericType !== entangleType(toType, fromType) &&
+          !isTypeRef(utils.portType(graph, path[r].edge.from, path[r].edge.outPort)) &&
+          !isTypeRef(utils.portType(graph, path[r].edge.to, path[r].edge.inPort))) {
+          var error = 'Type mismatch: Two pathes to node ' + path[r].edge.from + ' have different types: ' + JSON.stringify(fromNode.genericType) + ' and ' + JSON.stringify(entangleType(toType, fromType)) + '.'
           throw new Error(error)
         }
         fromNode.generic = true
@@ -304,8 +370,10 @@ function replacePathGenerics (graph, path, type) {
     var toType = (graph.parent(path[r].edge.from) === path[r].edge.to) ? toNode.outputPorts[path[r].edge.inPort] : toNode.inputPorts[path[r].edge.inPort]
     var entangled = toNode.genericType || entangleType(fromType, toType)
     if (isGeneric(toType)) {
-      if (toNode.genericType !== undefined && toNode.genericType !== entangleType(fromType, toType)) {
-        var error = 'Type mismatch: Two pathes to node ' + path[r].edge.to + ' have different types: ' + toNode.genericType + ' and ' + entangleType(fromType, toType) + '.'
+      if (toNode.genericType !== undefined && toNode.genericType !== entangleType(fromType, toType) &&
+          !isTypeRef(utils.portType(graph, path[r].edge.from, path[r].edge.outPort)) &&
+          !isTypeRef(utils.portType(graph, path[r].edge.to, path[r].edge.inPort))) {
+        var error = 'Type mismatch: Two pathes to node ' + path[r].edge.to + ' have different types: ' + JSON.stringify(toNode.genericType) + ' and ' + JSON.stringify(entangleType(fromType, toType)) + '.'
         throw new Error(error)
       }
       toNode.generic = true
