@@ -54,6 +54,9 @@ export function replaceGeneric (what, replacement) {
 
 function entangleType (type, template) {
   if (template[0] === '[' && template[template.length - 1] === ']') {
+    if (typeof (type) === 'object' && type.type === 'type-ref') {
+      return _.merge({}, type, {template})
+    }
     return type.replace(/\[/g, '').replace(/\]/g, '')
   } else {
     return type
@@ -237,10 +240,10 @@ export function replaceGenerics (graph) {
       replacePathGenericsForward(processGraph, pathsToReplace[p], validType)
     }
   }
-  var typeRefs = determineTypeReferences(processGraph)
-  console.error(typeRefs)
-  applyKnownTypeRefs(processGraph, typeRefs)
-  replaceUnkownTypeReferences(processGraph)
+  // var typeRefs = determineTypeReferences(processGraph)
+  // console.error(typeRefs)
+  // applyKnownTypeRefs(processGraph, typeRefs)
+  // replaceUnkownTypeReferences(processGraph)
   // typeRefs.a.b.c
   return processGraph
 }
@@ -282,9 +285,6 @@ function applyKnownTypeRefs (graph, typeRefs) {
 }
 
 function replaceUnkownTypeReferences (graph) {
-  if (graph !== '') {
-    return
-  }
   _(graph.nodes())
     .map((n) => graph.node(n))
     .each((n) => {
@@ -368,13 +368,18 @@ function replacePathGenerics (graph, path, type) {
     }
     var toNode = graph.node(path[r].edge.to)
     var toType = (graph.parent(path[r].edge.from) === path[r].edge.to) ? toNode.outputPorts[path[r].edge.inPort] : toNode.inputPorts[path[r].edge.inPort]
+    console.error(fromType, toType, toNode.genericType)
     var entangled = toNode.genericType || entangleType(fromType, toType)
     if (isGeneric(toType)) {
       if (toNode.genericType !== undefined && toNode.genericType !== entangleType(fromType, toType) &&
           !isTypeRef(utils.portType(graph, path[r].edge.from, path[r].edge.outPort)) &&
-          !isTypeRef(utils.portType(graph, path[r].edge.to, path[r].edge.inPort))) {
+          !isTypeRef(utils.portType(graph, path[r].edge.to, path[r].edge.inPort)) &&
+          !isTypeRef(toNode.genericType)) {
         var error = 'Type mismatch: Two pathes to node ' + path[r].edge.to + ' have different types: ' + JSON.stringify(toNode.genericType) + ' and ' + JSON.stringify(entangleType(fromType, toType)) + '.'
         throw new Error(error)
+      }
+      if (isTypeRef(toNode.genericType)) {
+        entangled = entangleType(fromType, toType)
       }
       toNode.generic = true
       toNode.genericType = entangled
