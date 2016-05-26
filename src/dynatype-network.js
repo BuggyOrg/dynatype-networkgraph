@@ -53,7 +53,7 @@ export function replaceGeneric (what, replacement) {
 }
 
 function entangleType (type, template) {
-  if (template[0] === '[' && template[template.length - 1] === ']') {
+  if (template && template[0] === '[' && template[template.length - 1] === ']') {
     if (typeof (type) === 'object' && type.type === 'type-ref') {
       return _.merge({}, type, {template})
     }
@@ -66,7 +66,7 @@ function entangleType (type, template) {
 function tangleType (type, template) {
   if (template[0] === '[' && template[template.length - 1] === ']') {
     if (typeof (type) === 'object' && type.type === 'type-ref') {
-      return type
+      return _.merge({}, type, {template})
     }
     return '[' + type + ']'
   } else {
@@ -193,6 +193,8 @@ export function replaceGenerics (graph) {
   applyKnownTypeRefs(graph, typeRefs)
   replaceUnkownTypeReferences(graph)
   graph = replaceGenericsInternal(graph)
+  replaceGenericFunctionTypes(graph)
+  replaceGenericTypeRefs(graph)
   return graph
 }
 
@@ -260,6 +262,10 @@ function isTypeRef (type) {
   return typeof (type) === 'object' && type.type === 'type-ref'
 }
 
+function isFunction (type) {
+  return typeof (type) === 'object' && type.type === 'function'
+}
+
 function determineTypeReferences (graph) {
   return _(graph.edges())
     .map((e) => _.merge({}, e, {value: graph.edge(e)}))
@@ -285,7 +291,7 @@ function applyKnownTypeRefs (graph, typeRefs) {
     var node = graph.node(r.refNode)
     var oNode = graph.node(r.reference.node)
     node[utils.portDirectionType(graph, r.refNode, r.refPort)][r.refPort] = r.type
-    oNode[utils.portDirectionType(graph, r.reference.node, r.reference.port)][r.reference.port] = r.type
+    oNode[utils.portDirectionType(graph, r.reference.node, r.reference.port)][r.reference.port] = entangleType(r.type, r.reference.template)
     graph.setNode(r.refNode, _.cloneDeep(node))
     graph.setNode(r.reference.node, _.cloneDeep(oNode))
   })
@@ -300,10 +306,61 @@ function replaceUnkownTypeReferences (graph) {
     })
 }
 
+function replaceGenericFunctionTypes (graph) {
+  _(graph.nodes())
+    .map((n) => graph.node(n))
+    .each((n) => {
+      replaceFunctionPorts(graph, n, 'inputPorts')
+      replaceFunctionPorts(graph, n, 'outputPorts')
+    })
+}
+
+function replaceGenericTypeRefs (graph) {
+  _(graph.nodes())
+    .map((n) => graph.node(n))
+    .each((n) => {
+      if (n.genericType && n.genericType.type === 'type-ref') {
+        n.genericType = resolveTypeReference(graph, n.genericType)
+      } else if (n.genericType && n.genericType.type === 'function') {
+        n.genericType = replaceFunctionTypeReferences(graph, n.genericType)
+      }
+    })
+}
+
+function replaceFunctionPorts (graph, node, portType) {
+  node[portType] = _.mapValues(node[portType], (type, key) => {
+    if (isFunction(type)) {
+      return replaceFunctionTypeReferences(graph, type)
+    }
+    return type
+  })
+  graph.setNode(node.branchPath, _.cloneDeep(node))
+}
+
+function replaceFunctionTypeReferences (graph, functionType) {
+  var resTypeRefs = _.partial(resolveTypeReference, graph)
+  return {
+    type: 'function',
+    arguments: _.mapValues(functionType.arguments, resTypeRefs),
+    outputs: _.mapValues(functionType.outputs, resTypeRefs),
+    return: resTypeRefs(functionType.return)
+  }
+}
+
+function resolveTypeReference (graph, typeRef) {
+  if (isTypeRef(typeRef)) {
+    return resolveTypeReference(graph, graph.node(typeRef.node)[utils.portDirectionType(graph, typeRef.node, typeRef.port)][typeRef.port])
+  } else if (isFunction(typeRef)) {
+    return replaceFunctionTypeReferences(graph, typeRef)
+  } else {
+    return typeRef
+  }
+}
+
 function replacePortReferences (graph, node, portType) {
   node[portType] = _.mapValues(node[portType], (type, key) => {
     if (isTypeRef(type)) {
-      return graph.node(type.node)[utils.portDirectionType(graph, type.node, type.port)][type.port]
+      return resolveTypeReference(graph, type)
     }
     return type
   })
