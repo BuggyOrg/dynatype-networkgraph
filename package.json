@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@buggyorg/component-library": "^0.1.6",
-    "@buggyorg/graphtools": "^0.2.13",
+    "@buggyorg/graphtools": "^0.2.18",
     "commander": "^2.9.0",
     "get-stdin": "^5.0.1",
     "graphlib": "^1.0.7",
